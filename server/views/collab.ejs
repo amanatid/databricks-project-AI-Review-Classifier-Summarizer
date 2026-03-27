@@ -1,0 +1,261 @@
+<%- include("partials/header.ejs") %>
+
+
+
+     
+ <% if ( locals.submitbutton) { %> 
+      <div class="alert alert-warning alert-dismissible  show" role="alert">
+           
+              <%= message %>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div> 
+  <%} %>      
+
+
+<!-- Search Section -->
+<div class="container my-5  px-2 d-flex justify-content-center align-items-center min-vh-100">
+  <% if (!locals.submitbutton) { %>
+  <div class="card shadow-lg rounded-4 p-4 border-0 w-100 px-3" style="max-width: 800px; width: 100%; background-color: #fefdf9;">
+    
+    <div>
+      <form  class="row g-4" action="/technician" method ="POST">
+        <div class="text-center mb-4">
+          <h3 class="fw-bold">Προσθήκη Τεχνίτη</h3>
+          <p class="text-muted">Συμπληρώστε τα στοιχεία για νέο τεχνίτη. Δωρεάν Καταχώρηση!</p>
+        </div>
+  
+        <div class="mb-3">
+          <label for="onoma" class="form-label">Όνομα</label>
+          <input type="text" class="form-control rounded-pill inputbutton"    id="onoma" name="Onoma" required >
+        </div>
+  
+        <div class="mb-3">
+          <label for="epitheto" class="form-label">Επίθετο</label>
+          <input type="text" class="form-control  rounded-pill w-100"  id="epitheto" name="Epitheto" required>
+        </div>
+  
+        <div class="mb-3">
+          <!--<label for="poli" class="form-label">Πόλη</label> -->
+          <select class="form-select rounded-pill w-100" id="poli" name="Poli"  required >
+            <option value="">Επιλέξτε Πόλη</option>
+            <option value="Ιωάννινα">Ιωάννινα</option>
+            <option value="Γρεβενά">Γρεβενά</option>
+             <option value="Πρέβεζα">Πρέβεζα</option>
+            
+          </select>
+        </div>
+  
+        <div class="mb-3">
+         <!-- <label for="eidikotita" class="form-label">Ειδικότητα</label> -->
+          <select class="form-select rounded-pill w-100" id="eidikotita" name="Eidikotites" required >
+           <option value="">Επιλέξτε Ειδικότητα</option>
+           <option>Καθαρισμός</option>
+           <option>Μετακομίσεις-Μεταφορές</option>
+           <option>Οικιακές Συσκευές</option>
+          <option>Υδραυλικοί</option>
+          <option>Ηλεκτρολόγοι</option>
+          <option>Ξυλουργοί</option>
+          <option>Ελαιοχρωματιστές</option>
+           <option>Τοποθέτηση Πλακιδίων</option>
+          <option>Γυψοσανίδες</option>
+            <option>Οικοδομικές Εργασίες</option>
+          <option>Τεχνικοί Θερμομόνωσης</option>
+         <option>Τοποθέτηση Κουφωμάτων</option> 
+          <option>Ψυκτικοί</option>
+          <option>Κηπουροί</option>
+           <option>Πολιτικοί Μηχανικοί</option>
+            <option>Οικονομολόγοι-Λογιστές</option>
+           <option>Άλλη Κατηγορία</option>
+          
+          
+          </select>
+        </div>
+  
+        
+      <!-- Dynamic subcategory field -->
+      <div id="additionalOptions" class="mb-3"></div>
+
+  
+
+        <div class="mb-3">
+          <label for="timi" class="form-label">Ενδεικτική Τιμή (€)</label>
+          <input type="number" class="form-control  rounded-pill w-100 " id="timi" name="Timi" step="1">
+        </div>
+  
+        
+  
+        <div class="mb-3">
+          <label for="epimerous" class="form-label" >Πρόσθετες Εργασίες</label>
+         <!-- <textarea class="form-control rounded-3 w-100" id="epimerous" name="Epimerous" rows="2"  required ></textarea>-->
+           <textarea class="form-control rounded-3 w-100" id="prosthetes" name="Prosthetes" rows="2"   ></textarea>
+        </div>
+  
+        <div class="mb-3">
+          <label for="diathesimotita" class="form-label" >Διαθεσιμότητα</label>
+          <input type="text" class="form-control rounded-pill w-100" id="diathesimotita" name="Diathesimotita" placeholder="π.χ. Δευτ - Παρ 09:00 - 17:00" required>
+        </div>
+  
+        <div class="mb-4">
+          <label for="phone" class="form-label">Τηλέφωνο</label>
+          <input type="tel" class="form-control rounded-pill w-100" id="phone" name="Phone" placeholder="π.χ. +306987123456" required>
+        </div>
+  
+  
+        <button type="submit" class="btn btn-success w-100 rounded-pill py-2" >
+          <i class="bi bi-check-circle me-2" ></i>Υποβολή Τεχνίτη
+        </button>
+      </form>
+       <% } %>
+    </div>
+         
+
+  </div>
+</div>
+
+
+
+
+
+  
+
+<%- include("partials/footer.ejs") %>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const categorySelect = document.getElementById("eidikotita");
+    const additionalOptionsDiv = document.getElementById("additionalOptions");
+
+    // Prevent JS errors if form is not present
+    if (!categorySelect || !additionalOptionsDiv) return;
+
+    const optionsMap = {
+    "Καθαρισμός": [
+      "Κοινόχρηστοι Χώροι",
+      "Διαμερισμάτων",
+      "Οικιακές Εργασίες",
+      "Τύπου Airbnb",
+      "Άλλο"
+    ],
+    "Μετακομίσεις-Μεταφορές": [
+      "Εντός Πόλεως",
+      "Εκτός Πόλεως",
+      "Ανυψωτικό"
+    ],
+    "Οικιακές Συσκευές": [
+      "Λευκές Οικιακές Συσκευές",
+      "Όλων των Ειδών"
+    ],
+
+    "Υδραυλικοί": [
+      "Νέα εγκατάσταση",
+      "Μερεμέτια",
+      "Ανακάινιση"
+    ],
+ 
+    "Ηλεκτρολόγοι": [
+      "Νέα εγκατάσταση",
+      "Μερεμέτια",
+      "Ανακάινιση"
+    ],
+
+    
+    "Ξυλουργοί": [
+      "Ντουλάπια Κουζίνας",
+      "Ντουλάπες",
+      "Μερεμέτια",
+      "Κουφώματα"
+    ],
+    
+
+     
+    "Ελαιοχρωματιστές": [
+      "Σπατουλάρισμα-Χρωματισμός",
+      "Φρεσκάρισμα",
+    ],
+    
+
+     
+    "Τοποθέτηση Πλακιδίων": [
+      "Τοποθέτηση Μαρμάρων",
+      "Τοποθέτηση Πλακιδίων",
+       "Μερεμέτια"
+    ],
+    
+   "Τοποθέτηση Κουφωμάτων": [
+      "Αλουμίνια",
+      "PVC",
+       "Μερεμέτια"
+    ],
+
+    "Τεχνικοί Θερμομόνωσης": [
+      "Μονώσεις Ταρατσών",
+      "Θερμοπρόσoψη",
+    ],
+
+     "Ψυκτικοί": [
+      "Νέα εγκατάσταση",
+      "Αντλίες Θερμότητας",
+       "Συντήρηση"
+    ],
+
+
+    "Κηπούροι": [
+      "Καθαρισμός Οικόπέδων-Κήπων",
+       "Καλλωπισμός Κήπων"
+    ],  
+
+    "Οικοδομικές Εργασίες":[
+        "Χτίσιμο",
+        "Σοφάτισμα",
+        "Στέγη-Σκεπή",
+        "Μερεμέτια"
+    ],
+   
+   
+  
+
+  };
+
+
+    categorySelect.addEventListener("change", function () {
+      const selected = categorySelect.value;
+      const suboptions = optionsMap[selected];
+
+      additionalOptionsDiv.innerHTML = "";
+
+      if (suboptions?.length) {
+        suboptions.forEach((item, index) => {
+          const checkboxId = `option-${selected}-${index}`;
+
+          const wrapper = document.createElement("div");
+          wrapper.classList.add("form-check");
+
+          const input = document.createElement("input");
+          input.type = "checkbox";
+          input.classList.add("form-check-input");
+          input.id = checkboxId;
+          input.name = "Epimerous";
+          input.value = item;
+
+          const label = document.createElement("label");
+          label.classList.add("form-check-label");
+          label.setAttribute("for", checkboxId);
+          label.innerText = item;
+
+          wrapper.appendChild(input);
+          wrapper.appendChild(label);
+          additionalOptionsDiv.appendChild(wrapper);
+        });
+      } else {
+        additionalOptionsDiv.innerHTML = '<p class="text-muted">Δεν υπάρχουν επιλογές.</p>';
+      }
+    });
+  });
+
+
+</script>
+
+</body>
+</html>

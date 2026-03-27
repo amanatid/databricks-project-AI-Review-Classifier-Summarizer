@@ -1,0 +1,291 @@
+<%- include("partials/header.ejs") %>
+
+<section class="hero position-relative mb-5">
+
+  <img src="/images/hero-workers.png" class="hero-img" alt="Hero">
+
+  <div class="hero-overlay d-flex justify-content-center align-items-center text-center">
+    <h1 class="fw-bold display-4 bg-dark bg-opacity-50 p-3 rounded-4 text-white">
+      Ο δικός σου Μάστορας... με ένα κλικ!
+    </h1>
+  </div>
+
+</section>
+
+
+
+  <!-- Search Section -->
+  <div class="container my-6 search-section">
+    
+   
+    <form class="row g-4"  onsubmit="handleSubmit(event)" >
+
+      <div  class="col-md-1" >
+      <img src="images/search.png"  height="35" alt="search">
+    </div>  
+   
+      <div class="col-md-4">
+        <label for="speciality" class="form-label">Ειδικότητα</label>
+        <select id="speciality"  name="speciality"  class="form-select">
+          
+          <option selected disabled>Επιλέξτε Ειδικότητα</option>
+            <% Object.keys(optionsMap).forEach(function(cat){ %>
+                      <option>
+                        <%= cat %>
+                      </option>
+            <% }) %>
+         
+        </select>
+      </div>
+     
+     
+      
+      <div class="col-md-4">
+        <label for="city" class="form-label">Πόλη</label>
+        <select id="city" name="city"   class="form-select">
+          <option selected disabled>Επιλέξτε Πόλη</option>
+          <% for (var i = 0; i < uniquePoli.length; i++) { %>
+          
+          <option> <%=  uniquePoli[i] %></option>
+         
+          <% } %>
+        </select>
+      </div>
+      
+      <!--change it to include the search  box Timi/price--> 
+      <!-- <div class="col-md-2">
+        <label for="price" class="form-label">Μέγιστη Τιμή (€)</label>
+        <input type="number" name="price"  class="form-control" id="price" placeholder="π.χ. 50">
+      </div> -->
+      
+    
+
+      <div class="col-md-3">
+        <button class="search-btn"  type="submit" ><i class="fas fa-phone"></i> Αναζήτηση Τεχνικών</button> 
+      </div>
+
+      <!-- erase this-->
+      <div  id="price" > </div>
+ 
+    </form>
+
+  </div>
+
+
+       
+ <% if ( locals.submitbutton) { %> 
+  <div class="alert alert-warning alert-dismissible  show" role="alert">
+          <%= message %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div> 
+<%} %>     
+
+
+<div class="container my-5">
+  <div class="row    g-4">
+<!--   /////////////////////////////////////////////////////////////////////////////////   -->    
+     <!-- Share Link Section -->
+      <div id="shareLinkContainer" class="text-center my-4 d-none">
+        <p>📤 Μοιράσου την αναζήτησή σου με φίλο:</p>
+        <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap">
+          <button class="btn btn-success" onclick="copyShareLink()">📋 Αντιγραφή</button>
+        </div>
+        <p id="copyMsg" class="text-success mt-2" style="display: none;">✅ Ο σύνδεσμος αντιγράφηκε!</p>
+      </div>
+<!--   /////////////////////////////////////////////////////////////////////////////////   -->    
+
+    <div class="container my-5">
+      <div id="results" class="row g-4"> <!-- row moved here -->
+       
+      </div>
+    </div>
+    
+
+
+  </div>
+</div>
+
+
+
+
+
+
+
+
+  <section class="services">
+    <h2>Υπηρεσίες</h2>
+    <div class="service-grid">
+      <div class="col service-item  category-icon"><i class="fas fa-home"></i><img src="./images/cleaning.png" alt="Καθαρισμός"><br>Καθαρισμός</div>
+       <div class="col service-item  category-icon"><i class="fas fa-home"></i> <img src="./images/moving-home.png" width="60" alt="Μετακομισείς"><br>Μετακομισείς</div>
+      <div class="service-item"><i class="fas fa-blender"></i>  <img src="./images/electric-appliances.png" width="60" alt="Οικιακές Συσκευές">  <br>Οικιακές Συσκευές</div>
+
+      <div class="service-item"><i class="fas fa-hard-hat"></i> <img src="./images/plumber.png" width="60" alt="Υδραυλικοί"><br>Υδραυλικοί</div>
+<div class="service-item"><i class="fas fa-hard-hat"></i><img src="./images/electrician.png" width="60" alt="Ηλεκτρολόγοι"><br>Ηλεκτρολόγοι</div>
+<div class="service-item"><i class="fas fa-hard-hat"></i><img src="./images/carpenter.png" width="60" alt="Ξυλουργοί"><br>Ξυλουργοί</div>
+
+      <div class="service-item"  style="max-width: 130px; word-wrap: break-word; font-size: 0.9rem; text-align: center;"><i class="fas fa-tools"></i><img src="./images/painter.png" width="65" alt="Ελαιοχρωματιστές"><br>Ελαιοχρωματιστές</div>
+     
+      <div class="service-item"><i class="fas fa-border-style"></i><img src="./images/ceramic.png" width="60" alt="Τοποθέτηση Πλακιδίων"><br>Τοποθέτηση Πλακιδίων</div>
+      <div class="service-item"><i class="fas fa-tree"></i><img src="./images/drywall.png" width="60" alt="Γυψοσανίδες"><br>Γυψοσανίδες</div>
+        
+      <div class="service-item"><i class="fas fa-hammer"></i> <img src="./images/worker.png" width="60" alt="Οικοδομικές Εργασίες"><br>Οικοδομικές Εργασίες</div>
+      <div class="service-item"><i class="fas fa-hammer"></i> <img src="./images/insulation.png" width="60" alt="Τεχνικοί Θερμoμόνωσης"><br>Τεχνικοί Θερμoμόνωσης</div>
+
+     <div class="service-item"><i class="fas fa-hammer"></i> <img src="./images/business.png" width="60" alt="Κουφώματα"><br>Κουφώματα</div>
+     <div class="service-item"><i class="fas fa-hammer"></i> <img src="./images/refrigerator.png" width="60" alt="Ψυκτικόι"><br>Ψυκτικόι</div>
+     <div class="service-item"><i class="fas fa-hammer"></i> <img src="./images/gardener.png" width="60" alt="Κηπούροι"><br>Κηπούροι</div>
+     <div class="service-item"><i class="fas fa-hammer"></i> <img src="./images/civilengineer.png" width="60" alt="Πολιτικοί Μηχανικοί"><br>Πολιτικοί Μηχανικοί</div>
+     <div class="service-item"><i class="fas fa-hammer"></i> <img src="./images/accountmanager.png" width="60" alt=""><br>Οικονομολόγοι-Λογιστές</div>
+
+    </div>
+  </section>
+
+
+
+
+  
+  
+  <!-- Call to Action -->
+  <div class="container text-center my-5">
+    <a href="./become-technician" class="btn btn-lg btn-success rounded-pill px-5 shadow-sm">🤝 Γίνε Συνεργάτης</a>
+  </div>
+
+  
+
+  <%- include("partials/footer.ejs") %>
+
+  
+  
+  
+
+  
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+ 
+
+
+
+<script>
+  ///////////////////
+  let generatedShareURL = '';
+
+  ////////////////////
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    const speciality = document.getElementById('speciality').value;
+    const city = document.getElementById('city').value;
+    const price = document.getElementById('price').value;
+
+    const response = await fetch('/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ speciality, city, price })
+    });
+
+    const result = await response.json();
+
+    console.log("Response from server:", result);
+
+    const container = document.getElementById('results');
+   
+    container.innerHTML = ''; // Clear old results
+  
+     
+    if  ( result.data && result.data.length > 0) {
+       /////////////////////////////////////////////////////////////////////////////////
+      // Build and show the shareable link
+      //const shareURL = `${window.location.origin}${window.location.pathname}search?speciality=${encodeURIComponent(speciality)}&city=${encodeURIComponent(city)}`;
+      const shareURL = `${window.location.origin}${window.location.pathname}search?speciality=${speciality}&city=${city}`;
+      console.log(shareURL)
+
+      generatedShareURL = shareURL;
+      document.getElementById('shareLinkContainer').classList.remove('d-none');
+      document.getElementById('copyMsg').style.display = 'none'; // Reset
+      /////////////////////////////////////////////////////////////////////////////////
+
+      result.data.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'col-md-6 col-lg-6">';
+
+         if (item.Timi === null) {
+          item.Timi='-'
+        }
+        card.innerHTML = `
+       
+        
+
+        <div class="card shadow rounded-4 border-0 overflow-hidden w-100 h-100 d-flex flex-column" style="background-color: #fefdf9;">
+           <div class="card-body p-4 ">
+      
+            <div class="text-center mb-3">
+                <h4 class="fw-bold">${item.Onoma} ${item.Epitheto}</h4>
+            </div>  
+
+            <p class="mb-1">
+               <i class="bi bi-award-fill  me-2"  style="color: #009150;" ></i><strong>Ειδικότητα:</strong>
+              <span class="custom-badge" style="font-size: 14px; padding: 6px 14px;" ><b>${item.Eidikotita} </b></span> 
+           </p>
+      
+            ${item.Epimerous1 ? item.Epimerous1
+        .split(',')
+        .map(word => `
+          <p class="text-muted mb-1 fst-italic">
+            <strong>✔️</strong> ${word.trim()}
+          </p>
+        `).join('') : ''
+      }
+      
+           <p class="mb-1">
+             <i class="bi bi-tools text-secondary me-2"></i><strong>Πρόσθετες Εργασίες:</strong> ${item.Prosthetes}
+           </p>
+      
+          <p class="mb-1">
+            <i class="bi bi-cash-coin text-success me-2"></i><strong>Ενδεικτική Τιμή:</strong> €${item.Timi}
+          </p>
+      
+          <p class="mb-1">
+            <i class="bi bi-geo-alt-fill  me-2" style="color: #85c1f3;" ></i><strong>Πόλη:</strong>${item.Poli}
+          </p>
+      
+          <p class="mb-1">
+            <i class="bi bi-calendar-check-fill text-info me-2"></i><strong>Διαθεσιμότητα:</strong> ${item.Diathesimotita}
+          </p>
+      
+        
+      
+    
+ 
+           <a href="tel:${item.Phone}"
+             class="btn phone-button w-100 mb-2 rounded-pill">
+            <i class="bi bi-telephone-fill me-2"></i>${item.Phone}
+           </a>
+         </div>
+       </div>
+     
+        `;
+        container.appendChild(card);
+      });
+    } else {
+      container.innerHTML = '<p class="text-danger">Δεν βρέθηκαν τεχνικοί με αυτά τα κριτήρια.</p>';
+    }
+  }
+
+ /////////////////////////////////////////////////////////////////////////////////
+ function copyShareLink() {
+  if (!generatedShareURL) return;
+  //console.log(generatedShareURL);
+  navigator.clipboard.writeText(generatedShareURL).then(() => {
+    document.getElementById('copyMsg').style.display = 'block';
+  }).catch(err => {
+    console.error('Copy failed:', err);
+  });
+}
+
+
+ /////////////////////////////////////////////////////////////////////////////////
+
+</script>
+
+
+</body>
+</html>

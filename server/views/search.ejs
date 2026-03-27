@@ -1,0 +1,89 @@
+<%- include("partials/header.ejs") %>
+
+<section class="hero">
+  <div class="hero-text">
+    <h1>Αποτελέσματα Αναζήτησης <%= speciality %>   <%= city %></h1>
+  </div>
+</section>
+
+
+ 
+
+   
+
+
+<div class="container my-5">
+  <div class="row g-4">
+    <% if (results && results.length > 0) { %>
+      <% results.forEach(item => { %>
+        <div class="col-md-6 col-lg-6">
+          <div class="card shadow rounded-4 border-0 overflow-hidden w-100 h-100 d-flex flex-column" style="background-color: #fefdf9;">
+            <div class="card-body p-4">
+              <div class="text-center mb-3">
+                <h4 class="fw-bold"><%= item.Onoma %> <%= item.Epitheto %></h4>
+              </div>
+              <p><strong>Ειδικότητα:</strong> <span class="custom-badge"><%= item.Eidikotita %></span></p>
+              <% if (item.Epimerous1) { 
+                item.Epimerous1.split(',').forEach(detail => { %>
+                <p class="text-muted fst-italic">✔️ <%= detail.trim() %></p>
+              <% }) } %>
+              <p><strong>Πρόσθετες Εργασίες:</strong> <%= item.Prosthetes || '-' %></p>
+              <p><strong>Ενδεικτική Τιμή:</strong> €<%= item.Timi || '-' %></p>
+              <p><strong>Πόλη:</strong> <%= item.Poli %></p>
+              <p><strong>Διαθεσιμότητα:</strong> <%= item.Diathesimotita %></p>
+              <a href="tel:<%= item.Phone %>" class="btn phone-button w-100 mb-2 rounded-pill">
+                <i class="bi bi-telephone-fill me-2"></i><%= item.Phone %>
+              </a>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p class="text-danger">Δεν βρέθηκαν τεχνικοί με αυτά τα κριτήρια.</p>
+    <% } %>
+  </div>
+</div>
+
+
+  <section class="services">
+    <h2>Υπηρεσίες</h2>
+    <div class="service-grid">
+      <div class="col service-item  category-icon"><i class="fas fa-home"></i><img src="./images/cleaning.png" alt="Καθαρισμός"><br>Καθαρισμός</div>
+       <div class="col service-item  category-icon"><i class="fas fa-home"></i> <img src="./images/moving-home.png" width="60" alt="Μετακομισείς"><br>Μετακομισείς</div>
+      <div class="service-item"><i class="fas fa-blender"></i>  <img src="./images/electric-appliances.png" width="60" alt="Οικιακές Συσκευές">  <br>Οικιακές Συσκευές</div>
+
+      <div class="service-item"><i class="fas fa-hard-hat"></i> <img src="./images/plumber.png" width="60" alt="Υδραυλικοί"><br>Υδραυλικοί</div>
+<div class="service-item"><i class="fas fa-hard-hat"></i><img src="./images/electrician.png" width="60" alt="Ηλεκτρολόγοι"><br>Ηλεκτρολόγοι</div>
+<div class="service-item"><i class="fas fa-hard-hat"></i><img src="./images/carpenter.png" width="60" alt="Ξυλουργοί"><br>Ξυλουργοί</div>
+
+      <div class="service-item"  style="max-width: 130px; word-wrap: break-word; font-size: 0.9rem; text-align: center;"><i class="fas fa-tools"></i><img src="./images/painter.png" width="65" alt="Ελαιοχρωματιστές"><br>Ελαιοχρωματιστές</div>
+     
+      <div class="service-item"><i class="fas fa-border-style"></i><img src="./images/ceramic.png" width="60" alt="Τοποθέτηση Πλακιδίων"><br>Τοποθέτηση Πλακιδίων</div>
+      <div class="service-item"><i class="fas fa-tree"></i><img src="./images/drywall.png" width="60" alt="Γυψοσανίδες"><br>Γυψοσανίδες</div>
+        
+      <div class="service-item"><i class="fas fa-hammer"></i> <img src="./images/worker.png" width="60" alt="Οικοδομικές Εργασίες"><br>Οικοδομικές Εργασίες</div>
+      <div class="service-item"><i class="fas fa-hammer"></i> <img src="./images/insulation.png" width="60" alt="Τεχνικοί Θερμoμόνωσης"><br>Τεχνικοί Θερμoμόνωσης</div>
+
+     <div class="service-item"><i class="fas fa-hammer"></i> <img src="./images/business.png" width="60" alt="Κουφώματα"><br>Κουφώματα</div>
+     <div class="service-item"><i class="fas fa-hammer"></i> <img src="./images/refrigerator.png" width="60" alt="Ψυκτικόι"><br>Ψυκτικόι</div>
+     <div class="service-item"><i class="fas fa-hammer"></i> <img src="./images/gardener.png" width="60" alt="Κηπούροι"><br>Κηπούροι</div>
+     <div class="service-item"><i class="fas fa-hammer"></i> <img src="./images/civilengineer.png" width="60" alt="Πολιτικοί Μηχανικοί"><br>Πολιτικοί Μηχανικοί</div>
+
+    </div>
+  </section>
+
+
+
+<div class="container text-center my-5 " >
+  <a href="/collab" class="btn btn-lg btn-success rounded-pill px-5 shadow-sm">🤝 Γίνε Συνεργάτης</a>
+</div>
+
+
+
+<%- include("partials/footer.ejs") %>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
+
+

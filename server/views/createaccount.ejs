@@ -1,0 +1,95 @@
+<%- include("partials/header.ejs") %>
+     
+<!-- Bootstrap Icons -->
+<link rel="stylesheet"
+ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<% if (locals.submitbutton) { %> 
+<div class="alert alert-warning alert-dismissible show" role="alert">
+  <%= message %>
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div> 
+<div class="container my-5 px-2 d-flex justify-content-center align-items-center min-vh-100"></div>
+<% } %>      
+
+<% if (!locals.submitbutton) { %>
+<div class="container my-5 d-flex justify-content-center align-items-center min-vh-80">
+
+ 
+
+  <div class="card shadow-lg rounded-4 p-4 w-100" style="max-width: 400px; background-color: #fefdf9;">
+ 
+ 
+
+    <div class="text-center mb-4">
+      <h3 class="fw-bold">
+        <i class="bi bi-person-plus"></i>
+        Δημιουργία Λογαριασμού
+      </h3>
+      <p class="text-muted">Συμπληρώστε τα στοιχεία σας</p>
+    </div>
+
+    <form action="/register" method="POST" class="row g-3">
+
+      <!-- Email / Username -->
+      <div class="col-12">
+        <label for="email" class="form-label">Email</label>
+        <input type="email"
+               id="email"
+               name="username"
+               class="form-control rounded-pill"
+               placeholder="example@domain.com"
+               required>
+      </div>
+
+      <!-- Password with toggle -->
+      <div class="col-12 position-relative">
+        <label for="password" class="form-label">Κωδικός Πρόσβασης</label>
+        <input type="password"
+               id="password"
+               name="password"
+               class="form-control rounded-pill"
+               placeholder="Τουλάχιστον 7 χαρακτήρες"
+               minlength="7"
+               required>
+        <!-- Toggle icon -->
+        <i class="bi bi-eye-fill position-absolute" 
+           id="togglePassword"
+           style="top: 38px; right: 15px; cursor: pointer;"></i>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="col-12 mt-3">
+        <button type="submit"
+                class="btn btn-success w-100 rounded-pill py-2">
+          <i class="bi bi-check-circle me-2"></i>Δημιουργία Λογαριασμού
+        </button>
+      </div>
+
+    </form>
+  
+  
+  </div>
+   
+</div>
+ <% } %>
+
+
+<%- include("partials/footer.ejs") %>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // Password show/hide toggle
+  const togglePassword = document.getElementById('togglePassword');
+  const passwordInput = document.getElementById('password');
+
+  togglePassword.addEventListener('click', () => {
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    togglePassword.classList.toggle('bi-eye-fill');
+    togglePassword.classList.toggle('bi-eye-slash-fill');
+  });
+</script>
+
+</body>
+</html>
