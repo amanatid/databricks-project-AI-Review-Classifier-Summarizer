@@ -19,80 +19,55 @@ body {
 
 
 
-.hero {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 50px 40px;
-}
-.hero-text h1 {
-  font-size: 36px;
-  color: #0c3f91;
-}
-.hero-text .filters {
-  margin: 20px 0;
-}
-
-
-
-
-
-.hero {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  padding: 10px;
-  background-color: #f9f9f9;
-}
-
-.hero-text {
-  flex: 1;
-  min-width: 300px;
-  max-width: 50%;
-}
-
-.hero-img img {
-  max-width: 500px;
-  max-height: 400px;
-}
-
 .technician-img {
   max-width: 100%;
   height: auto;
   object-fit: contain;
 }
 
-
+/* HERO CONTAINER */
 .hero {
   position: relative;
   width: 100%;
   overflow: hidden;
 }
 
-/* The image */
+/* HERO IMAGE */
 .hero-img {
   width: 100%;
-  height: auto;   /* keeps whole image */
+  height: auto;
   display: block;
+  object-fit: cover;
 }
 
-/* Overlay for centered text */
+/* OVERLAY */
 .hero-overlay {
   position: absolute;
   inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px; /* prevents text touching edges */
 }
 
-/* Mobile adjustments */
+/* HERO TEXT */
+
+
+.hero-overlay h1 {
+  font-size: clamp(1.2rem, 4vw, 2.5rem);
+}
+
+
+
 @media (max-width: 768px) {
 
-  .hero h1 {
-    font-size: 1.3rem;
-    line-height: 1.3;
+  .hero-overlay h1 {
+    font-size: 1.4rem;
+    padding: 10px;
+    max-width: 95%;
   }
+
 }
-
-
-
 
 
 
