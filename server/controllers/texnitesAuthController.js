@@ -14,7 +14,7 @@ export const createaccount = async  (req, res) => {
  res.render("createaccount.ejs");
 };
 
-
+ 
 
 //register controller
 export const registerUser = async (req, res) => {
