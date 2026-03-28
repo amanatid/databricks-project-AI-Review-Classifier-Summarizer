@@ -61,25 +61,21 @@ name="Eidikotites" required>
 
 <div id="servicesContainer"></div>
 
-<div class="text-center mt-4">
+<div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3 mt-4">
 
-<button type="button"
-class="btn btn-success rounded-pill px-4 shadow-sm me-3"
-onclick="addServiceCard()">
+  <button type="button"
+    class="btn btn-success rounded-pill px-4 shadow-sm w-100 w-md-auto"
+    onclick="addServiceCard()">
+    <i class="bi bi-plus-circle me-1"></i>
+    Προσθήκη Πόλης
+  </button>
 
-<i class="bi bi-plus-circle"></i>
-Προσθήκη Πόλης
-
-</button>
-
-<button type="button"
-class="btn btn-outline-danger rounded-pill px-4 shadow-sm"
-onclick="removeLastServiceCard()">
-
-<i class="bi bi-trash"></i>
-Διαγραφή Πόλης
-
-</button>
+  <button type="button"
+    class="btn btn-outline-danger rounded-pill px-4 shadow-sm w-100 w-md-auto"
+    onclick="removeLastServiceCard()">
+    <i class="bi bi-trash me-1"></i>
+    Διαγραφή Πόλης
+  </button>
 
 </div>
 
