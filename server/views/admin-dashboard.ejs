@@ -1,0 +1,94 @@
+<%- include("partials/header.ejs") %>
+
+<div class="container my-5">
+
+  <div class="text-center mb-4">
+    <h3 class="fw-bold">
+      🛠 Admin Dashboard
+    </h3>
+    <p class="text-muted">Διαχείριση όλων των τεχνικών</p>
+  </div>
+
+  <div class="row g-4">
+
+  <% if (cards && cards.length > 0) { %>
+
+    <% cards.forEach(function(item) { %>
+
+      <div class="col-md-6">
+
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body d-flex flex-column">
+
+            <!-- 👤 OWNER -->
+            <p class="text-muted small">
+              👤 Χρήστης: <b><%= item.texnitesUsers?.username %></b>
+            </p>
+
+            <!-- NAME -->
+            <h5 class="fw-bold text-center">
+              <%= item.Onoma %> <%= item.Epitheto %>
+            </h5>
+
+            <!-- SPECIALITY -->
+            <p>
+              <strong>Ειδικότητα:</strong>
+              <span class="badge bg-success">
+                <%= item.Eidikotita %>
+              </span>
+            </p>
+
+            <!-- CITY -->
+            <p>
+              <strong>Πόλη:</strong> <%= item.Poli %>
+            </p>
+
+            <!-- PRICE -->
+            <p>
+              <strong>Τιμή:</strong> €<%= item.Timi || "-" %>
+            </p>
+
+            <!-- PHONE -->
+            <a href="tel:<%= item.Phone %>"
+               class="btn btn-outline-primary rounded-pill mb-2">
+               📞 <%= item.Phone %>
+            </a>
+
+            <!-- ACTIONS -->
+            <div class="d-flex justify-content-between mt-auto">
+
+              <!-- EDIT -->
+              <a href="/admin/edit/<%= item.id %>"
+                 class="btn btn-outline-primary btn-sm">
+                 ✏️ Επεξεργασία
+              </a>
+
+              <!-- DELETE -->
+              <form action="/admin/delete/<%= item.id %>?_method=DELETE"
+                    method="POST"
+                    onsubmit="return confirm('Διαγραφή κάρτας;')">
+
+                <button class="btn btn-outline-danger btn-sm">
+                  🗑 Διαγραφή
+                </button>
+
+              </form>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    <% }) %>
+
+  <% } else { %>
+    <p class="text-center text-muted">Δεν υπάρχουν δεδομένα.</p>
+  <% } %>
+
+  </div>
+
+</div>
+
+<%- include("partials/footer.ejs") %>

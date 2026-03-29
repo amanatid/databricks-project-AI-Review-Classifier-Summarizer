@@ -48,7 +48,7 @@
           </li>
         <% } %>
 
-        <% if (user) { %>
+        <% if (user && user.role === 'user') { %>
 
           <li class="nav-item">
             <span class="nav-link text-nowrap">
@@ -67,9 +67,7 @@
             </a>
           </li>
 
-          <li class="nav-item">
-            <a class="nav-link" href="/logout">Έξοδος</a>
-          </li>
+         
 
           <li class="nav-item ms-2">
             <a class="btn btn-success rounded-pill px-3 text-nowrap"
@@ -78,6 +76,12 @@
             </a>
           </li>
 
+        <% } %>
+
+       <% if ( user ) { %>
+            <li class="nav-item">
+            <a class="nav-link" href="/logout">Έξοδος</a>
+          </li>
         <% } %>
 
         <% if (!user) { %>

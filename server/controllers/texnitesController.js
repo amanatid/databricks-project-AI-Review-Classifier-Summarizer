@@ -5,7 +5,8 @@ import { getAllTexnites,
          TechnicianWithAccount, 
          getMyTechnicianDataWithAccount,
          updatemycard, deletecard,
-         profilemodeldeleteaccount
+         profilemodeldeleteaccount,
+         admingetallUsers
         } from "../models/texnitesModel.js";
 import { sendContactEmail } from "../services/emailService.js";
 import { professionMap, optionsMap} from "../public/data/professionMap.js";
@@ -275,9 +276,13 @@ export const collabpage = async (req, res) => {
 };
 
 export const adminPage = async (req, res) => {
-  res.json({
-    message: "Welcome to the admin page",
+   const cards=  await admingetallUsers();
+   res.render("admin-dashboard.ejs",{
+     cards: cards  
   });
+  /*res.json({
+    message: "Welcome to the admin page",
+  });*/
 };
 
 

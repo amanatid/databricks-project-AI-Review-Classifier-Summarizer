@@ -271,3 +271,26 @@ export const profilemodeldeleteaccount = async(userId) =>{
 
     return error;
 };
+
+export const admingetallUsers = async (req, res) =>{
+
+  try {
+    const { data, error } = await supabase
+      .from("texnitestest")
+      .select(`
+        *,
+        texnitesUsers (
+          id,
+          username
+        )
+      `)
+      .order("created_at", { ascending: false });
+
+    if (error) throw new Error(error.message);
+
+    return data;
+
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
