@@ -8,9 +8,6 @@ import { getAllTexnites,
          profilemodeldeleteaccount
         } from "../models/texnitesModel.js";
 import { sendContactEmail } from "../services/emailService.js";
-//import { TechnicianWithAccount } from "../models/texnitesModel.js";
-//import { getMyTechnicianDataWithAccount } from "../models/texnitesModel.js";
-//import { updatemycard, deletecard } from "../models/texnitesModel.js";
 import { professionMap, optionsMap} from "../public/data/professionMap.js";
 import bcrypt from "bcryptjs"; 
 
@@ -271,8 +268,15 @@ export const showterms = async (req, res) => {
 
 
 export const collabpage = async (req, res) => {
+  const {username, userId, role} = req.userInfo
   res.render("technicianform.ejs",{
     optionsMap:optionsMap
+  });
+};
+
+export const adminPage = async (req, res) => {
+  res.json({
+    message: "Welcome to the admin page",
   });
 };
 

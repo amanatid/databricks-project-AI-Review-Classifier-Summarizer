@@ -4,12 +4,12 @@ import dotenv from "dotenv";
 import texnitesRoutes from "./routes/texnitesRoutes.js";
 import { errorHandler } from "./middleware/errorMiddleware.js";
 import texnitesAuthRoutes  from "./routes/texnitesAuthRoutes.js";
-//import texnitesEditInfoRoutes from "./routes/texnitisEditInfoRoutes.js"
+//import texnitesAdminRoute from "./routes/texnitesAdminRoute.js"
 import cookieParser from "cookie-parser";
 import { storetoken } from "./middleware/cookietoken.js";
 import methodOverride from "method-override";
 import  cors from "cors" ;
-//import jwt from "jsonwebtoken";
+
 
 dotenv.config();
 
@@ -45,7 +45,7 @@ app.use(methodOverride("_method"));
 // Routes
 app.use("/", texnitesRoutes);
 app.use("/", texnitesAuthRoutes);
-//app.use("/", texnitesEditInfoRoutes);
+
 
 
 // Error middleware (must be last)

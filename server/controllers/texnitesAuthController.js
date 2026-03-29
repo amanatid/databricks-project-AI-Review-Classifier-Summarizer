@@ -142,7 +142,12 @@ export const loginUser = async (req, res) => {
     });
 
     //res.render("technicianform.ejs");
-     return res.redirect("/technician");
+    // return res.redirect("/technician");
+    if (user.role === "admin") {
+         return res.redirect("/admin");
+    } else {
+        return res.redirect("/technician");
+    }
 
      
   } catch (error) {

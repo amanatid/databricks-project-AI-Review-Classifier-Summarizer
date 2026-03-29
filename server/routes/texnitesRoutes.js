@@ -16,9 +16,11 @@ import {
     profile,
     profilechangepassword,
     profiledeleteaccount,
-    submitTechnician1
+    submitTechnician1,
+    adminPage,
  } from "../controllers/texnitesController.js";
 import { authMiddleware } from "../middleware/texnitesAuthMiddleware.js";
+import { isAdminUser } from "../middleware/texnitesAdminMiddleware.js";
 
 
 const router = express.Router();
@@ -27,7 +29,9 @@ router.get("/", getHomePage);
 
 router.get("/become-technician", becometechnician);
 
-router.get("/technician",authMiddleware,collabpage );
+router.get("/technician",authMiddleware, collabpage );
+router.get("/admin", authMiddleware, isAdminUser, adminPage);
+
 router.post("/technician",authMiddleware, submitTechnician);
 router.get("/mycards", authMiddleware, mycardsnew);
 //////////////////////////////////////////////////////////
