@@ -1,4 +1,4 @@
-import { createTechnicianWithAccount, getMyTechnicianDataWithAccount, 
+/*import { createTechnicianWithAccount, getMyTechnicianDataWithAccount, 
     getMyTechnicianSpecificDataWithAccount ,updateMyTechnicianSpecificDataWithAccount } from "../models/texnitesModel.js";
 
 
