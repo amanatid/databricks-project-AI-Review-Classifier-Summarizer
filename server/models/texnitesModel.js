@@ -183,6 +183,7 @@ export const updatemycard = async (userId, id,updatedFields) => {
       .eq("id", id)
       .eq("user_id", userId);
       
+      console.log(updateError);
 
       return updateError;
   
@@ -272,11 +273,37 @@ export const profilemodeldeleteaccount = async(userId) =>{
     return error;
 };
 
-export const admingetallUsers = async (req, res) =>{
+export const admingetallTechnicians = async (req, res) =>{
 
   try {
     const { data, error } = await supabase
       .from("texnitestest")
+      .select(`
+        *,
+        texnitesUsers (
+          id,
+          username,
+          password
+        )
+      `)
+      .order("created_at", { ascending: false });
+
+    if (error) throw new Error(error.message);
+
+    return data;
+
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+
+
+
+export const admingetallUsers = async (req, res) =>{
+
+  try {
+    const { data, error } = await supabase
+      .from("texnitesUsers")
       .select(`
         *,
         texnitesUsers (
@@ -293,4 +320,91 @@ export const admingetallUsers = async (req, res) =>{
   } catch (err) {
     res.status(500).send(err.message);
   }
+};
+
+
+export const adminupdatemycard =  async (id,updatedFields) => {
+
+    const { error: updateError } = await supabase
+      .from("texnitestest")
+      .update(updatedFields)
+      .eq("id", id)
+   
+      
+     // console.log(updateError);
+
+      return updateError;
+  
+};
+
+
+
+export const adminupdateusername = async (idtexnitesusers, username) => {
+  try {
+    const { error } = await supabase
+      .from("texnitesUsers")
+      .update({ username })
+      .eq("id", idtexnitesusers);
+
+    if (error) throw error;
+
+    return true;
+
+  } catch (err) {
+    console.error(err.message);
+    
+    return false;
+  }
+};
+
+
+export const adminupdatepassword = async (idtexnitesusers, password) => {
+  try {
+    const { error } = await supabase
+      .from("texnitesUsers")
+      .update({ password })
+      .eq("id", idtexnitesusers);
+
+    if (error) throw error;
+
+    return true;
+
+  } catch (err) {
+   // console.error(err.message);
+    return false;
+  }
+};
+
+
+export const adminCreateUser = async (username, password) => {
+  try {
+    const { data, error } = await supabase
+      .from("texnitesUsers")
+      .insert([
+        {
+          username: username,
+          password: password
+        }
+      ])
+      .select(); // returns inserted row
+
+    if (error) throw error;
+
+    return data;
+
+  } catch (err) {
+   // console.error("Possible Server Error or dublicate email ",err.message);
+    return null;
+  }
+};
+
+
+export const admindeletecard = async(id) =>{
+   
+   const {error }= await supabase
+  .from("texnitestest")
+  .delete()
+  .eq("id", id);
+ 
+  return error;
 };

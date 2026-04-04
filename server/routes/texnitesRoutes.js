@@ -18,6 +18,8 @@ import {
     profiledeleteaccount,
     submitTechnician1,
     adminPage,
+    admineditmycard,
+    admindeletemycard,
  } from "../controllers/texnitesController.js";
 import { authMiddleware } from "../middleware/texnitesAuthMiddleware.js";
 import { isAdminUser } from "../middleware/texnitesAdminMiddleware.js";
@@ -41,6 +43,12 @@ router.post("/technicianwithoutaccount", submitTechnician1 );
 router.post("/edit-card/:id", authMiddleware, editmycard);
 router.delete("/delete-card/:id", authMiddleware,  deletemycard);
 //////////////////////////////////////////////////////////////////////
+
+router.post("/admin/edit/:id", authMiddleware, isAdminUser, admineditmycard);
+router.delete("/admin/delete/:id", authMiddleware, isAdminUser, admindeletemycard);
+
+ 
+
 router.get("/profile",  authMiddleware,  profile);
 router.post("/change-password",authMiddleware, profilechangepassword );
 router.post("/delete-account", authMiddleware, profiledeleteaccount);

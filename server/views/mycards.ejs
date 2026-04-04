@@ -49,7 +49,8 @@
           <p class="mb-1"> <i class="bi bi-geo-alt-fill me-2" style="color: #85c1f3;" >
           </i><strong>Πόλη:</strong><%= item.Poli %> </p>
            <p><i class="bi bi-calendar-check-fill text-info me-2"></i><strong>Διαθεσιμότητα:</strong>
-             <%= item.Diathesimotita %></p> <a href="tel:<%= item.Phone %>" 
+             <%= item.Diathesimotita %></p> 
+             <a href="tel:<%= item.Phone %>" 
                 class="btn phone-button w-100 mb-2 rounded-pill">
              <i class="bi bi-telephone-fill me-2"></i> <%= item.Phone %> </a>
 
@@ -100,7 +101,9 @@
   <div class="modal-dialog">
     <div class="modal-content rounded-4">
 
-      <form class="edit-form" data-id="<%= item.id %>">
+     
+      <form class="edit-form" data-id="<%= item.id %>" data-epimerous="<%= item.Epimerous1 || '' %>"> 
+        
 
         <div class="modal-header">
           <h5 class="modal-title">Επεξεργασία Κάρτας</h5>
@@ -118,11 +121,12 @@
 
                   <label class="form-label">Ειδικότητα</label>
 
+                  
                   <select class="form-select eidikotita-select"
                           name="Eidikotites"
                           data-id="<%= item.id %>"
-                          required>
-
+                          data-original="<%= item.Eidikotites %>"
+                          required> 
                     
                    
 
@@ -145,29 +149,7 @@
                 <!-- Epimerous -->
                 <div class="mb-3">
                   <label class="form-label">Επιμέρους</label>
-                  <% optionsMap[item.Eidikotites].forEach(function(service, i){ %>
-
-                    <div class="form-check">
-
-                    <input class="form-check-input"
-                          type="checkbox"
-                          name="Epimerous1[]"
-                          value="<%= service %>"
-                          id="sub-<%= i %>"
-
-                          <%= item.Epimerous1 && item.Epimerous1.includes(service)
-                                ? "checked"
-                                : "" %>
-                    >
-
-                    <label class="form-check-label" for="sub-<%= i %>">
-                      <%= service %>
-                    </label>
-
-                    </div>
-
-            <% }) %>
- 
+                 
                   
                   <div id="edit-additional-<%= item.id %>"> 
                  
@@ -200,7 +182,7 @@
                             data-id="<%= item.id %>"
                             required>
 
-                    <option value="<%= item.Perifereia %>"><%= item.Perifereia ? item.Perifereia :  "Όλοι"%></option>
+                    <option value="<%= item.Nomos %>"><%= item.Nomos ? item.Nomos :  "Όλοι"%></option>
 
                     </select>
 
@@ -284,7 +266,14 @@ const regions = [...new Set(greekMunicipalities.map(m => m.region))];
 const optionsMap = <%- JSON.stringify(optionsMap) %>;
 const professionMap = <%- JSON.stringify(professionMap) %>;
 
-
+// =================== Step 1: store original Epimerous for each card ===================
+const originalEpimerousMap = {};
+<% techniciancards.forEach(function(item) { %>
+  originalEpimerousMap["<%= item.id %>"] = {
+    eidikotita: "<%= item.Eidikotites %>",
+    epimerous: "<%= (item.Epimerous1 || '') %>"
+  };
+<% }) %>
 
 //
 
@@ -421,36 +410,58 @@ populateCities(regionSelect.value, this.value, citySelect);
 
 
     
+document.querySelectorAll(".modal").forEach(modal => {
 
-  <% techniciancards.forEach(function(item){ %>
+  modal.addEventListener("show.bs.modal", function () {
 
-    const preselected<%= item.id %> =
-         "<%= item.Epimerous1 || '' %>"
-          .split(",")
-          .map(s => s.trim())
-          .filter(Boolean);
+    const form = this.querySelector(".edit-form");
+    const id = form.dataset.id;
 
-    generateEditSubOptions(
-      "<%= item.Eidikotita %>",
-      <%= item.id %>,
-      preselected<%= item.id %>
-    );
+    // find original data (from EJS)
+    const item = {
+      eidikotita: form.querySelector(".eidikotita-select").getAttribute("data-original"),
+      epimerous: form.getAttribute("data-epimerous")
+    };
 
-  <% }) %>
+    // reset select
+    const select = form.querySelector(".eidikotita-select");
+    select.value = item.eidikotita;
 
-  // change dropdown dynamically
-  document.querySelectorAll(".eidikotita-select")
-    .forEach(select => {
+    // parse epimerous
+    const preselected = item.epimerous
+      .split(",")
+      .map(s => s.trim())
+      .filter(Boolean);
 
-      select.addEventListener("change", function(){
-
-        const id = this.dataset.id;
-        generateEditSubOptions(this.value, id);
-
-      });
+    // regenerate checkboxes correctly
+    generateEditSubOptions(item.eidikotita, id, preselected);
 
   });
 
+});
+  // change dropdown dynamically
+  // ================= FIX CHANGE BEHAVIOR =================
+// =================== Step 2: dynamic Epimerous update ===================
+document.querySelectorAll(".eidikotita-select").forEach(select => {
+
+  select.addEventListener("change", function(){
+    const id = this.dataset.id;
+    const newValue = this.value;
+
+    let preselected = [];
+
+    // if user selected back the original Eidikotita, use original Epimerous
+    if(originalEpimerousMap[id] && newValue === originalEpimerousMap[id].eidikotita){
+      preselected = originalEpimerousMap[id].epimerous
+                      .split(',')
+                      .map(s => s.trim())
+                      .filter(Boolean);
+    }
+
+    generateEditSubOptions(newValue, id, preselected);
+  });
+
+});
   // submit edit
   document.querySelectorAll(".edit-form")
     .forEach(form => {
