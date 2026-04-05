@@ -6,12 +6,6 @@ import { getAllTexnites,
          getMyTechnicianDataWithAccount,
          updatemycard, deletecard,
          profilemodeldeleteaccount,
-         admingetallTechnicians,
-         adminupdatemycard,
-         adminupdateusername,
-         adminupdatepassword,
-         adminCreateUser,
-         admindeletecard,
         } from "../models/texnitesModel.js";
 import { sendContactEmail } from "../services/emailService.js";
 import { professionMap, optionsMap} from "../public/data/professionMap.js";
@@ -22,6 +16,35 @@ export const getHomePage = async (req, res, next) => {
     const data = await getAllTexnites();
 
     const uniquePoli = [...new Set(data.map(item => item.Poli))];
+
+    //----------pagination----------------------//
+    //http://localhost:3000/?page=2
+   /* const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    console.log('before pagination');
+    const { datapaginated, count } = await pagination({
+      table: "texnitestest",
+      page,
+      limit,
+      sortBy: req.query.sortBy,
+      sortOrder: req.query.sortOrder
+    });
+    
+    const totalPages = Math.ceil(count / limit);
+
+    res.status(200).json({
+      success: true,
+      datapaginated,
+      pagination: {
+        page,
+        limit,
+        totalCards: count,
+        totalPages
+      }
+    }); */
+
+    //--------------end -------pagination--------------------------------//
+
 
     res.render("index.ejs", {
       data,
@@ -280,19 +303,7 @@ export const collabpage = async (req, res) => {
   });
 };
 
-export const adminPage = async (req, res) => {
-   const cards=  await admingetallTechnicians();
-   //const  users = await admingetallUsers();
 
-   res.render("admin-dashboard.ejs",{
-     cards: cards,  
-     professionMap:professionMap,
-     optionsMap:optionsMap
-  });
-  /*res.json({
-    message: "Welcome to the admin page",
-  });*/
-};
 
 
 export const collabpage1 = async (req, res) => {
@@ -486,128 +497,3 @@ export const profiledeleteaccount = async (req,res)=>{
 
 };    
 
-
-
-export const admineditmycard =  async  (req, res, next) => {
-// console.log('Updated');
-   
-     try {
- 
-     const id = req.params.id;
-     console.log("I edited the card")
-     console.log(req.body)
-     // user comes from authMiddleware
-      const {  userId } = req.userInfo;
-      let newuserid = null; 
-     
-      const {idtexnitesusers, username, password} = req.body;
-      console.log( "Id-username-password", username, password);
-
-      if( idtexnitesusers) {
-        console.log('username exists with id=',idtexnitesusers) ;
-        if (!username){
-            newuserid = null;
-          
-        }
-        // 🔹 Update username
-        await adminupdateusername(idtexnitesusers, username);
-
-        // 🔹 Password logic
-        if (password) {
-          const hashedPassword = await bcrypt.hash(password, 10);
-          await adminupdatepassword(idtexnitesusers, hashedPassword);
-        }
-         newuserid = idtexnitesusers;
-        
-      }
-      else{
-       console.log('create username') ;
-        
-
-        if( username && password) { 
-         const hashedPassword = await bcrypt.hash(password, 10);
-         const newuser = await adminCreateUser(username,hashedPassword);      
-         newuserid =newuser[0].id; 
-        }
-      }
-      
-
-   
-     const {
-       Onoma,
-       Epitheto,
-       Eidikotites,
-       Perifereia,
-       Nomos,
-       Poli,
-       Timi,
-       Prosthetes,
-       Diathesimotita,
-       Phone,
-       Epimerous1,
-     } = req.body;
-    
-     const Eidikotita = professionMap[Eidikotites];
-    
-     const updatedFields = {
-       Onoma,
-       Epitheto,
-       Eidikotites,
-       Eidikotita,
-       Perifereia,
-       Nomos,
-       Poli,
-       Timi:parseInt(Timi),
-       Prosthetes,
-       Diathesimotita,
-       Phone,
-       user_id:newuserid,
-       Epimerous1: Array.isArray(Epimerous1) && Epimerous1.length > 0
-                  ? Epimerous1.join(",")
-                  : null
-     };
-     console.log(id , updatedFields)
-     const error = await adminupdatemycard(id, updatedFields);
- 
-     if (error) {
-       return res.json({
-         success: false,
-         message: error.message
-       });
-     }
- 
-   //  res.json({ success: true });
-     res.redirect("/admin");
- 
-   } catch (err) {
-      next(err);
-      console.error(err);
- 
-     res.json({
-       success: false,
-       message: "Server error"
-     });
- 
-   }
- 
- 
-};
-
-
-export const admindeletemycard = async (req,res)=>{
-    
- try{   
-     //const { userId } = req.userInfo;
-
-     const id = req.params.id; 
-
-     console.log('admindeletecard id=',id); 
-     await admindeletecard(id);
-    
-    res.redirect("/admin");
-  } 
-  catch(error){
-           res.json({success: false, message: "Server error"});  
-        }     
-
-};    
