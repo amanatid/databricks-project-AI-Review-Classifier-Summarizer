@@ -223,7 +223,7 @@ export const resetpasswordupdatepassword = async(email,password) =>{
       .update({ password: password })
       .eq("username", email);
 
-       //if (updaterror) throw updaterror;
+       if (updateError) throw updateError;
 
 };
 
@@ -328,7 +328,7 @@ export const adminupdatemycard =  async (id,updatedFields) => {
     const { error: updateError } = await supabase
       .from("texnitestest")
       .update(updatedFields)
-      .eq("id", id)
+      .eq("id", id);
    
       
      // console.log(updateError);
@@ -370,7 +370,7 @@ export const adminupdatepassword = async (idtexnitesusers, password) => {
     return true;
 
   } catch (err) {
-   // console.error(err.message);
+    console.error(err.message);
     return false;
   }
 };
@@ -393,7 +393,7 @@ export const adminCreateUser = async (username, password) => {
     return data;
 
   } catch (err) {
-   // console.error("Possible Server Error or dublicate email ",err.message);
+    console.error("Possible Server Error or dublicate email ",err.message);
     return null;
   }
 };

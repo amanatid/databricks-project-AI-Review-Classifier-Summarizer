@@ -11,6 +11,8 @@ import { sendContactEmail } from "../services/emailService.js";
 import { professionMap, optionsMap} from "../public/data/professionMap.js";
 import bcrypt from "bcryptjs"; 
 
+
+
 export const getHomePage = async (req, res, next) => {
   try {
     const data = await getAllTexnites();
@@ -297,7 +299,7 @@ export const showterms = async (req, res) => {
 
 
 export const collabpage = async (req, res) => {
-  const {username, userId, role} = req.userInfo
+  //const {username, userId, role} = req.userInfo;
   res.render("technicianform.ejs",{
     optionsMap:optionsMap
   });
@@ -307,7 +309,7 @@ export const collabpage = async (req, res) => {
 
 
 export const collabpage1 = async (req, res) => {
-  console.log("Technician Without Account");
+ // console.log("Technician Without Account");
   res.render("technicianformwithoutaccount.ejs",{
     optionsMap:optionsMap
   });
@@ -330,8 +332,8 @@ export const editmycard =  async  (req, res, next) => {
      // user comes from authMiddleware
      const { username, userId } = req.userInfo;
  
-     console.log("editmycard",id, " ",username, " ", userId)
-     console.log(req.body)
+   //  console.log("editmycard",id, " ",username, " ", userId);
+    // console.log(req.body);
    
      const {
        Eidikotites,
@@ -363,7 +365,7 @@ export const editmycard =  async  (req, res, next) => {
      };
  
      const error = await updatemycard(userId, id, updatedFields);
-     console.log("error=",error)
+     console.log("error=",error);
      if (error) {
        return res.json({
          success: false,
@@ -391,7 +393,7 @@ export const editmycard =  async  (req, res, next) => {
 
 
 
-export const deletemycard = async (req, res, ) => {
+export const deletemycard = async (req, res ) => {
  try{ 
    const {  userId } = req.userInfo;
    const id = req.params.id;
@@ -412,7 +414,7 @@ export const deletemycard = async (req, res, ) => {
  }
  catch (err) {
  
-    // console.error(err);
+     console.error(err);
  
      res.json({
        success: false,
@@ -435,7 +437,7 @@ export const becometechnician =  async (req, res) => {
 
 
 
-export const profile = async (req, res, next) => {
+export const profile = async (req, res) => {
     res.render("profile.ejs"); 
 };
 
@@ -467,6 +469,7 @@ export const profilechangepassword = async (req,res)=>{
           res.render("profile",{message:"Ο κωδικός άλλαξε επιτυχώς."});
         }
         catch(error){
+          console.error(error);
            res.json({success: false, message: "Server error"});  
         }     
 
@@ -492,6 +495,7 @@ export const profiledeleteaccount = async (req,res)=>{
     res.redirect("/");
   } 
   catch(error){
+          console.error(error);
            res.json({success: false, message: "Server error"});  
         }     
 

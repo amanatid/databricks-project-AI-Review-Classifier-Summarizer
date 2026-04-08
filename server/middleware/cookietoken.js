@@ -10,7 +10,7 @@ export const storetoken =(req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
       res.locals.user = decoded;   // 👈 This makes user available in ALL EJS
     } catch (err) {
-    
+    //  console.log(err);
       res.locals.user = null;
     }
   }
