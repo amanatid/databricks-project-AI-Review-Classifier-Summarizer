@@ -125,16 +125,18 @@ export const submitContact = async (req, res) => {
 
 export const submitTechnician = async (req, res, next) => {
   try {
-   // const { username, userId } = req.userInfo;
+    const { username, userId } = req.userInfo;
     const created_at = new Date(); 
     const { Onoma, Epitheto, Eidikotites,Epimerous,services } = req.body;
 
 
-   // console.log("reqbody=", req.body)
+   console.log("reqbody=", req.userInfo)
+   console.log("reqbody=", req.body)
   //console.dir(req.body, { depth: null });
     
     const user_id = req.userInfo.userId; // from JWT middleware
     const Eidikotita = professionMap[Eidikotites];
+    console.log(user_id, userId)
     //console.log(Eidikotita)
     // Normalize Epimerous to always be array
    const normalizedServices = services.map(service => ({
@@ -199,11 +201,12 @@ export const submitTechnician = async (req, res, next) => {
 export const submitTechnician1 = async (req, res, next) => {
   try {
     console.log("Post Technician without Account");
+     console.log("reqbody=", req.body)
     const created_at = new Date(); 
     const { Onoma, Epitheto, Eidikotites,Epimerous,services } = req.body;
+ 
 
-
-   // console.log("reqbody=", req.body)
+    console.log("reqbody=", req.body)
   //console.dir(req.body, { depth: null });
     
     
@@ -332,8 +335,8 @@ export const editmycard =  async  (req, res, next) => {
      // user comes from authMiddleware
      const { username, userId } = req.userInfo;
  
-   //  console.log("editmycard",id, " ",username, " ", userId);
-    // console.log(req.body);
+     console.log("editmycard",id, " ",username, " ", userId);
+     console.log(req.body);
    
      const {
        Eidikotites,

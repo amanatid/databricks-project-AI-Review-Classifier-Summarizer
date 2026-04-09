@@ -1,4 +1,4 @@
-<%- include("partials/header.ejs") %>
+ <%- include("partials/header.ejs") %>
 
 <link rel="stylesheet"
  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -7,7 +7,7 @@
 <div class="alert alert-warning alert-dismissible show" role="alert">
   <%= message %>
   <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-</div> 
+</div>   
 <% } %>      
 
 <div class="container my-5 px-2 d-flex justify-content-center align-items-center min-vh-100">
@@ -222,15 +222,62 @@ name="services[${index}][Timi]">
 
 </div>
 
+
+
 <div class="col-12">
+  <label class="form-label">Διαθεσιμότητα</label>
 
-<label class="form-label">Διαθεσιμότητα</label>
+  <!-- Mode selection: Range or Specific -->
+  <div class="mb-2">
+    <select class="form-select" id="mode-${index}" onchange="toggleMode(${index})">
+      <option value="range">Εύρος ημερών</option>
+      <option value="specific">Συγκεκριμένες ημέρες</option>
+    </select>
+  </div>
 
-<input type="text"
-class="form-control rounded-pill"
-name="services[${index}][Diathesimotita]" required>
+  <!-- Range of days -->
+  <div class="row g-2 mb-2" id="range-container-${index}">
+    <div class="col-6">
+      <label class="form-label">Από</label>
+      <select class="form-select" name="services[${index}][DayFrom]" id="day-from-${index}">
+        ${["Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή","Σάββατο","Κυριακή"].map(day => `<option>${day}</option>`).join('')}
+      </select>
+    </div>
+    <div class="col-6">
+      <label class="form-label">Έως</label>
+      <select class="form-select" name="services[${index}][DayTo]" id="day-to-${index}">
+        ${["Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή","Σάββατο","Κυριακή"].map(day => `<option>${day}</option>`).join('')}
+      </select>
+    </div>
+  </div>
 
+  <!-- Specific days -->
+  <div class="row g-2 mb-2" id="specific-container-${index}" style="display:none;">
+    ${["Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή","Σάββατο","Κυριακή"].map((day,i) => `
+      <div class="col-6 col-md-4">
+        <div class="form-check">
+          <input class="form-check-input day-checkbox-${index}" type="checkbox"
+                 name="services[${index}][Days][]" value="${day}" id="day-${index}-${i}">
+          <label class="form-check-label" for="day-${index}-${i}">${day}</label>
+        </div>
+      </div>
+    `).join('')}
+  </div>
+
+  <!-- Time range -->
+  <div class="row g-2">
+    <div class="col-6">
+      <label class="form-label">Ώρα Από</label>
+      <input type="time" class="form-control" name="services[${index}][TimeFrom]" id="from-${index}">
+    </div>
+    <div class="col-6">
+      <label class="form-label">Ώρα Έως</label>
+      <input type="time" class="form-control" name="services[${index}][TimeTo]" id="to-${index}">
+    </div>
+  </div>
+  <input type="hidden" name="services[${index}][Diathesimotita]" id="diath-${index}">
 </div>
+
 
 <div class="col-12">
 
@@ -364,6 +411,7 @@ marker=L.marker([lat,lon]).addTo(map);
 
 });
 
+toggleMode(index);
 serviceIndex++;
 
 }
@@ -394,6 +442,126 @@ document.addEventListener("DOMContentLoaded",function(){
 
 addServiceCard();
 
+
+
+});
+
+
+function toggleMode(index) {
+  const mode = document.getElementById(`mode-${index}`).value;
+
+  const rangeContainer = document.getElementById(`range-container-${index}`);
+  const specificContainer = document.getElementById(`specific-container-${index}`);
+
+  const dayFrom = document.getElementById(`day-from-${index}`);
+  const dayTo = document.getElementById(`day-to-${index}`);
+  const checkboxes = document.querySelectorAll(`.day-checkbox-${index}`);
+
+  if (mode === 'range') {
+
+    rangeContainer.style.display = 'flex';
+    specificContainer.style.display = 'none';
+
+    // ENABLE range
+    dayFrom.disabled = false;
+    dayTo.disabled = false;
+
+    // DISABLE specific
+    checkboxes.forEach(cb => {
+      cb.checked = false;
+      cb.disabled = true;
+    });
+
+  } else {
+
+    rangeContainer.style.display = 'none';
+    specificContainer.style.display = 'flex';
+
+    // DISABLE range
+    dayFrom.disabled = true;
+    dayTo.disabled = true;
+
+    // ENABLE specific
+    checkboxes.forEach(cb => cb.disabled = false);
+  }
+}
+
+
+
+
+const weekdays = {
+  "Δευτέρα": 1,
+  "Τρίτη": 2,
+  "Τετάρτη": 3,
+  "Πέμπτη": 4,
+  "Παρασκευή": 5,
+  "Σάββατο": 6,
+  "Κυριακή": 7
+};
+
+document.querySelector('form').addEventListener('submit', function (e) {
+  const cards = document.querySelectorAll('#servicesContainer .card');
+  let valid = true;
+
+  cards.forEach((card, idx) => {
+    const mode = card.querySelector(`#mode-${idx}`).value;
+    const dayFrom = card.querySelector(`#day-from-${idx}`);
+    const dayTo = card.querySelector(`#day-to-${idx}`);
+    const checkboxes = card.querySelectorAll(`.day-checkbox-${idx}`);
+    const timeFrom = card.querySelector(`#from-${idx}`).value;
+    const timeTo = card.querySelector(`#to-${idx}`).value;
+
+    let availability = "";
+
+    if (mode === 'range') {
+      // Check empty or same day
+      if (!dayFrom.value || !dayTo.value || dayFrom.value === dayTo.value) {
+        availability = "";
+      } else if (weekdays[dayFrom.value] > weekdays[dayTo.value]) {
+        // Check order: Από must be earlier than Έως
+        availability = "";
+      } else {
+        availability = `${dayFrom.value}–${dayTo.value}`;
+      }
+    } else {
+      // Specific days: require at least one checkbox
+      const daysChecked = Array.from(checkboxes)
+        .filter(cb => cb.checked)
+        .map(cb => cb.value);
+      if (daysChecked.length === 0) {
+        availability = "";
+      } else {
+        availability = daysChecked.join(", ");
+      }
+    }
+
+    // Time validation: require both filled and From < To
+    if (!timeFrom || !timeTo || timeFrom >= timeTo) {
+      availability = "";
+    } else if (availability) {
+      availability += ` (${timeFrom}-${timeTo})`;
+    }
+
+    // Set hidden input
+    const hidden = card.querySelector(`#diath-${idx}`);
+    hidden.value = availability;
+
+    // Highlight invalid cards
+    if (!availability || availability.trim() === "") {
+      valid = false;
+      card.querySelector(`#mode-${idx}`).classList.add('is-invalid');
+    } else {
+      card.querySelector(`#mode-${idx}`).classList.remove('is-invalid');
+    }
+
+  });
+
+  if (!valid) {
+    e.preventDefault();
+    alert("Παρακαλώ συμπληρώστε σωστά τη Διαθεσιμότητα: ημέρες σε σωστή σειρά και ώρες για όλες τις πόλεις!");
+    const firstInvalid = document.querySelector('.is-invalid');
+    if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
 });
 
 </script>
