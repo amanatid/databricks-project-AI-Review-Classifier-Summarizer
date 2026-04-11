@@ -1,12 +1,17 @@
 import { createAccountTechnician,
          checkExistingTechnician,
          findUserByUsername,
-         resetpasswordcheckuser,
-         resetpasswordupdatepassword  }
+       }
         from "../models/texnitesModel.js";
+import { tokenfinduserbyusername,
+         resettokenexpires, 
+         tokenfinduserbytoken,
+         tokenpasswordtokenupdate 
+      } from "../models/texnitesModel.js";
+import { sendEmailResetPassword } from "../services/emailService.js";
 import bcrypt from "bcryptjs";   
-import  jwt  from "jsonwebtoken";
-import { sendContactEmail } from "../services/emailService.js";
+import  jwt  from "jsonwebtoken";      
+import crypto  from "crypto"; 
 
 
 
@@ -49,14 +54,14 @@ export const registerUser = async (req, res) => {
     } else {
       res.status(400).json({
         success: false,
-        message: "Unable to register user! please try again.",
+        message: "Δεν ήταν δυνατή η εγγραφή του χρήστη. Παρακαλώ δοκιμάστε ξανά.",
       });
     }
   } catch (e) {
     console.log(e);
     res.status(500).json({
       success: false,
-      message: "Some error occured! Please try again",
+      message: "Παρουσιάστηκε σφάλμα. Παρακαλώ δοκιμάστε ξανά.",
     });
   }
 };
@@ -88,18 +93,34 @@ export const loginaccount = async  (req, res) => {
 
 export const loginUser = async (req, res) => {
   try {
-    const { username, password } = req.body;
-    //console.log(username, password)
-
+     let { username, password } = req.body;
+   
+    username = username.trim();
+    username = username.replace(/\s+/g, "");
+    console.log(username, password)
     //find if the current user is exists in database or not
     const user = await findUserByUsername(username);
       //  console.log(user);
+    
+     /* ---------------- CHECK IF PHONE ---------------- */
+   
+    
+    const isPhone = /^\d+$/.test(username); // only digits
+   
+
+     if (isPhone) {
+      // must start with 69 and be 10 digits (Greek mobile)
+      
+      console.log(username);
+      if (!/^69\d{8}$/.test(username)) {
+        return res.status(400).render("login", {
+          errorMessage: "Μη έγκυρος αριθμός τηλεφώνου (πρέπει να ξεκινά από 69)"
+        });
+      }
+    }  
+      
 
     if (!user) {
-      /*return res.status(400).json({
-        success: false,
-        message: `User doesn't exists`,
-      });*/
       return res.status(400).render("login", {
       errorMessage: "Ο χρήστης δεν υπάρχει"
     });
@@ -171,70 +192,123 @@ export const forgotpassword = async  (req, res) => {
 };
 
 
-export const resetpassword = async  (req, res) => {
+export const forgetpasswordtoken = async (req,res)=>{
 
-      
-      const{email,password, confirmPassword}  = req.body;
+        const {email} = req.body;
+
+        try{
+          
+        console.log(email);
+        const user = await tokenfinduserbyusername(email);
+        //console.log(user);
+        //console.log(user.id); 
+
+        if(!user){
+              return res.render("forgotpassword",{
+              message:"Δεν βρέθηκε χρήστης με αυτό το email."
+              });
+        }
+
+        /* create token */
+
+        const token = crypto.randomBytes(32).toString("hex");
+
+        const expires = new Date(Date.now()+4*3600000); //1 hour
+
+        /* save token */
+
+        console.log("token=",token);
+        console.log("expires=",expires); 
+
+        await  resettokenexpires(user.id, token, expires);
+
+        /* reset link */
+
+        const link = `http://localhost:3000/resetpassword/${token}`;
+
+        /* send email */
+        await sendEmailResetPassword(email, link);
+        /*await transporter.sendMail({
+
+        to:email,
+        subject:"Επαναφορά Κωδικού",
+        html:`
+        <h3>Επαναφορά Κωδικού</h3>
+        <p>Πατήστε το παρακάτω link για να ορίσετε νέο κωδικό:</p>
+        <a href="${link}">${link}</a>
+        <p>Το link ισχύει για 1 ώρα.</p>
+        `
+
+        });*/
+
+        res.render("forgotpassword",{
+        message:"Σας στείλαμε email για επαναφορά κωδικού."
+        });
+
+        }catch(err){
+
+        console.log(err);
+
+        res.render("forgotpassword",{message:"Σφάλμα server"});
+
+        }
+
+};
 
 
-    try {
 
-    /* ---------------- PASSWORD CHECKS ---------------- */
+export const resetpasswordtoken = async  (req, res) => {
+  const { token } = req.params;
+ res.render("resetpassword", {
+    token,        
+    message: null // optional
+  });
+};
 
-    if (password !== confirmPassword) {
-      return res.render("forgotpassword", {
-        message: "Οι κωδικοί δεν ταιριάζουν."
-      });
-    }
+export const resetnewpassowrdnulltoken = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
 
-    if (password.length < 7) {
-      return res.render("forgotpassword", {
-        message: "Ο κωδικός πρέπει να έχει τουλάχιστον 7 χαρακτήρες."
-      });
-    }
 
-    /* ---------------- CHECK USER ---------------- */
-
-    const error = await resetpasswordcheckuser(email);
-
-    if (error ) {
-      return res.render("forgotpassword", {
-        message: "Δεν βρέθηκε χρήστης με αυτό το email."
-      });
-    }
-
-    /* ---------------- UPDATE PASSWORD ---------------- */
-    //hash user password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    
-    await sendContactEmail(email, password);
-    const updateError = await  resetpasswordupdatepassword(email,hashedPassword);
-    if (updateError) {
-      return res.render("forgotpassword", {
-        message: "Σφάλμα κατά την αλλαγή του κωδικού."
-      });
-    }
-
-    /* ---------------- SUCCESS ---------------- */
+  try {
+    // 🔍 Find user with token + check expiration
    
+   //  console.log(token, password);
+     const user = await tokenfinduserbytoken(token); 
 
-    res.render("forgotpassword", {
-      message: "Ο κωδικός σας άλλαξε επιτυχώς."
+    if ( !user) {
+      return res.render("resetpassword", {
+        token,
+        message: "Μη έγκυρο ή ληγμένο link."
+      });
+    }
+
+    // ⏰ Check expiration
+    if (new Date(user.reset_expires) < new Date()) {
+      return res.render("resetpassword", {
+        token,
+        message: "Το link έχει λήξει."
+      });
+    }
+
+    // 🔐 Hash new password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // 💾 Update password + clear token
+    await tokenpasswordtokenupdate(hashedPassword, user.id);
+
+    res.render("login", {
+      message: "Ο κωδικός ενημερώθηκε επιτυχώς."
     });
 
   } catch (err) {
-
     console.error(err);
-
-    res.render("forgotpassword", {
-      message: "Παρουσιάστηκε σφάλμα."
+    res.render("resetpassword", {
+      token,
+      message: "Σφάλμα server"
     });
-
   }
+}
 
 
-
-
-};
 

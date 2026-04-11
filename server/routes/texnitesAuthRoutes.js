@@ -4,10 +4,13 @@ import { createaccount,
          registerUser,
          loginaccount, 
          logoutUser,
-        forgotpassword, 
-        resetpassword } 
+         forgotpassword, 
+         forgetpasswordtoken,
+         resetpasswordtoken,
+         resetnewpassowrdnulltoken 
+        } 
         from "../controllers/texnitesAuthController.js";
-//import { authMiddleware } from "../middleware/texnitesAuthMiddleware.js";
+
 
 
 const router = express.Router();
@@ -17,8 +20,15 @@ router.post("/register", registerUser);
 router.get("/login", loginaccount);
 router.post("/login",loginUser);
 router.get("/logout", logoutUser);
+
 router.get("/forgot-password", forgotpassword);
-router.post("/forgotpassword",resetpassword);
+router.post("/forgotpassword", forgetpasswordtoken )
+router.get("/resetpassword/:token", resetpasswordtoken);
+router.post("/resetpassword/:token",  resetnewpassowrdnulltoken );
+//////////////////////////////////////////////////////////////
+
+
+
 
 
 

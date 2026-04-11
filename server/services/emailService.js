@@ -27,3 +27,32 @@ export const sendContactEmail = async ( email,  text ) => {
 
   await transporter.sendMail(mailOptions);
 };
+
+
+
+export const sendEmailResetPassword = async ( email,  link ) => {
+
+  const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+    secure: false,
+  });
+
+  
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "Επικοινωνία",
+    html: `
+        <h3>Επαναφορά Κωδικού</h3>
+        <p>Πατήστε το παρακάτω link για να ορίσετε νέο κωδικό:</p>
+        <a href="${link}">${link}</a>
+        <p>Το link ισχύει για 1 ώρα.</p> `
+  };
+
+  await transporter.sendMail(mailOptions);
+};

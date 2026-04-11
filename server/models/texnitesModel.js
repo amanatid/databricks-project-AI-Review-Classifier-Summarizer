@@ -203,29 +203,6 @@ export  const   deletecard = async (userId,id) => {
 };
 
 
-export const  resetpasswordcheckuser = async (email) =>{
-
-const {  error } = await supabase
-      .from("texnitesUsers")
-      .select("*")
-      .eq("username", email)
-      .single();
-
-      return error;
-
-
-};
-
-export const resetpasswordupdatepassword = async(email,password) =>{
-
-    const { error: updateError } = await supabase
-      .from("texnitesUsers")
-      .update({ password: password })
-      .eq("username", email);
-
-       if (updateError) throw updateError;
-
-};
 
 export const profilemodelcurrentpassword = async(userId)=>{
  
@@ -408,3 +385,65 @@ export const admindeletecard = async(id) =>{
  
   return error;
 };
+
+
+
+export const tokenfinduserbyusername = async(email) =>{
+   
+  
+const {data:user} = await supabase
+.from("texnitesUsers")
+.select("*")
+.eq("username",email)
+.single();
+
+ 
+  return user;
+};
+
+
+export const resettokenexpires = async(id, token, expires)=>{
+
+  await supabase
+.from("texnitesUsers")
+.update({
+reset_token:token,
+reset_expires:expires
+})
+.eq("id", id);
+
+}
+
+
+
+
+export const tokenfinduserbytoken = async(token) =>{
+ 
+  console.log('inside tokenfinduserbytoken')
+ const { data: user, error } = await supabase
+      .from("texnitesUsers")
+      .select("*")
+      .eq("reset_token", token)
+      .single();
+
+  console.log(error);    
+  return user;    
+};
+
+
+
+export const tokenpasswordtokenupdate = async(hashedPassword,id) =>{
+ 
+  // 💾 Update password + clear token
+    await supabase
+      .from("texnitesUsers")
+      .update({
+        password: hashedPassword,
+        reset_token: null,
+        reset_expires: null
+      })
+      .eq("id", id);
+
+};
+
+
