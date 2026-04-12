@@ -11,6 +11,8 @@ import cookieParser from "cookie-parser";
 import { storetoken } from "./middleware/cookietoken.js";
 import methodOverride from "method-override";
 import  cors from "cors" ;
+import promClient from "prom-client";
+
 
 
 dotenv.config();
@@ -29,6 +31,33 @@ const __dirname = dirname(__filename);
 
 const app = express();
 const port = process.env.PORT || 61000;
+
+//-------Prometheus Setup---------------------//
+const register = new promClient.Registry();
+promClient.collectDefaultMetrics(register);
+
+const httpRequestsCounter =   new promClient.Counter({
+      name: "http_requests_total",
+      help: "Total number of HTTP requests",
+      labelNames: ["method", "route", "status"]
+});
+
+register.registerMetric(httpRequestsCounter);
+
+// middleware to count requests
+app.use((req, res, next) => {
+  res.on("finish", () => {
+    httpRequestsCounter.inc({
+      method: req.method,
+      route: req.route ? req.route.path : req.path,
+      status: res.statusCode,
+    });
+  });
+  next();
+});
+
+///////////////////////////////////////////////
+
 
 // Ensure Express uses EJS for rendering views
 app.set("view engine", "ejs");
@@ -50,10 +79,14 @@ app.use("/", texnitesAuthRoutes);
 app.use("/", texnitesImageRoutes);
 
 
+//Expose  metrics endpoint for prometheus
+app.get("/metrics", async(req,res)=>{
+    res.set("Content-Type", register.contentType);
+    res.end( await register.metrics());
+});
 
 // Error middleware (must be last)
 app.use(errorHandler);
-
 
 
 
