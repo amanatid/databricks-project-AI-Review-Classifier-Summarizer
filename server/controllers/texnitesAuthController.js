@@ -224,7 +224,8 @@ export const forgetpasswordtoken = async (req,res)=>{
 
         /* reset link */
 
-        const link = `http://localhost:3000/resetpassword/${token}`;
+      // const link = `http://localhost:3000/resetpassword/${token}`;
+        const link = `${process.env.BASE_URL}/resetpassword/${token}`;
 
         /* send email */
         await sendEmailResetPassword(email, link);
