@@ -8,15 +8,22 @@ body {
 }
 
 
- .navbar {
-      background: linear-gradient(90deg, #4dc3aa 0%, #3498db 100%);
-    }
+.custom-navbar {
+  background-color: #d1e7dd; /* same as alert-success */
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
 
-    .navbar-brand span, .navbar .nav-link {
-      color: #ffffff !important;
-      font-weight: 600;
-    }
+/* Text colors */
+.custom-navbar .navbar-brand span,
+.custom-navbar .nav-link {
+  color: #0f5132 !important; /* darker green */
+  font-weight: 600;
+}
 
+/* Hover effect */
+.custom-navbar .nav-link:hover {
+  color: #084c2e !important;
+}
 
 
 .technician-img {
