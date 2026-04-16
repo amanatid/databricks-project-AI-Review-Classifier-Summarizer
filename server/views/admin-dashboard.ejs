@@ -269,6 +269,12 @@
             <div id="epimerous-container-<%= item.id %>"></div>
           </div>
 
+          <div class="mb-3">
+              <label class="form-label">Πρόσθετες</label>
+              <textarea class="form-control"
+                        name="Prosthetes"><%= item.Prosthetes %></textarea>
+          </div>
+
           <!-- PERIFEREIA -->
           <div class="mb-3">
             <label class="form-label">Περιφέρεια</label>
@@ -305,11 +311,7 @@
             </select>
           </div>
 
-          <div class="mb-3">
-            <label class="form-label">Πρόσθετες</label>
-            <textarea class="form-control"
-                      name="Prosthetes"><%= item.Prosthetes %></textarea>
-          </div>
+        
 
           <div class="mb-3">
             <label class="form-label">Τιμή (€)</label>
@@ -366,20 +368,34 @@
             </div>
 
             <!-- TIME -->
-            <div class="row g-2">
-              <div class="col-6">
-                <input type="time"
-                      class="form-control"
-                      id="edit-from-<%= item.id %>"
-                      step="60">
-              </div>
-              <div class="col-6">
-                <input type="time"
-                      class="form-control"
-                      id="edit-to-<%= item.id %>"
-                      step="60">
-              </div>
-            </div>
+              <div class="row g-2">
+  
+          <div class="col-6">
+            <label class="form-label">Ώρα Από</label>
+            <select class="form-select" id="edit-from-<%= item.id %>">
+              <option value="">--:--</option>
+              <% for(let h=0; h<24; h++){ for(let m of [0,30]){ %>
+                <option value="<%= String(h).padStart(2,'0') %>:<%= String(m).padStart(2,'0') %>">
+                  <%= String(h).padStart(2,'0') %>:<%= String(m).padStart(2,'0') %>
+                </option>
+              <% }} %>
+            </select>
+          </div>
+
+          <div class="col-6">
+            <label class="form-label">Ώρα Έως</label>
+            <select class="form-select" id="edit-to-<%= item.id %>">
+              <option value="">--:--</option>
+              <% for(let h=0; h<24; h++){ for(let m of [0,30]){ %>
+                <option value="<%= String(h).padStart(2,'0') %>:<%= String(m).padStart(2,'0') %>">
+                  <%= String(h).padStart(2,'0') %>:<%= String(m).padStart(2,'0') %>
+                </option>
+              <% }} %>
+            </select>
+          </div>
+
+       </div>
+
 
             <!-- FINAL VALUE -->
             <input type="hidden"
@@ -610,9 +626,12 @@ document.querySelectorAll(".modal").forEach(modal => {
     let timeTo = "";
 
     if(timeMatch){
-      const times = timeMatch[1].split("-");
-      timeFrom = times[0];
-      timeTo = times[1];
+      const times = timeMatch[1]
+        .split("-")
+        .map(t => t.trim());   // IMPORTANT
+
+      timeFrom = times[0] || "";
+      timeTo = times[1] || "";
     }
 
     const daysPart = raw.replace(/\(.*?\)/, "").trim();

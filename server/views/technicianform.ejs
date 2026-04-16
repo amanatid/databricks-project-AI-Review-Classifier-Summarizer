@@ -42,9 +42,9 @@
 <div class="mb-3">
 <label class="form-label">Επιλέξτε Ειδικότητα</label>
 
-<select class="form-select rounded-pill"
-onchange="generateSubOptions(this.value)"
-name="Eidikotites" required>
+<select class="form-select rounded-4 city-scroll"
+      onchange="generateSubOptions(this.value)"
+      name="Eidikotites" required>
 
 <option value="">🛠 Επιλέξτε Ειδικότητα</option>
 
@@ -74,7 +74,7 @@ name="Eidikotites" required>
     class="btn btn-outline-danger rounded-pill px-4 shadow-sm w-100 w-md-auto"
     onclick="removeLastServiceCard()">
     <i class="bi bi-trash me-1"></i>
-    Διαγραφή Πόλης
+    Διαγραφή Επιπλέον Πόλης
   </button>
 
 </div>
@@ -144,6 +144,19 @@ ${item}
 `;
 
 });
+
+}
+
+function loadAllCities(select){
+
+  select.innerHTML = '<option value="">Επιλέξτε Πόλη</option>';
+
+  greekMunicipalities.forEach(m => {
+    const opt = document.createElement("option");
+    opt.value = m.city;
+    opt.textContent = m.city;
+    select.appendChild(opt);
+  });
 
 }
 
@@ -319,6 +332,32 @@ const prefSelect=document.getElementById(`pref-${index}`);
 
 const citySelect=document.getElementById(`city-${index}`);
 
+/* LOAD ALL CITIES BY DEFAULT */
+loadAllCities(citySelect);
+
+/* make dropdown scrollable */
+
+
+/* -------- LOAD ALL CITIES BY DEFAULT -------- */
+
+function loadAllCities(select){
+
+  select.innerHTML = '<option value="">Επιλέξτε Πόλη</option>';
+
+  greekMunicipalities.forEach(m => {
+
+    const opt = document.createElement("option");
+    opt.value = m.city;
+    opt.textContent = m.city;
+
+    select.appendChild(opt);
+  });
+
+}
+
+/* initial load */
+loadAllCities(citySelect);
+
 /* LOAD REGIONS FROM MUNICIPALITIES */
 
 const regions = [...new Set(greekMunicipalities.map(m => m.region))];
@@ -336,7 +375,6 @@ regionSelect.appendChild(opt);
 });
 
 /* REGION FILTER */
-
 regionSelect.addEventListener("change",function(){
 
 prefSelect.innerHTML='<option value="">Όλοι</option>';
@@ -355,34 +393,44 @@ opt.textContent=p;
 prefSelect.appendChild(opt);
 });
 
+/* 🔥 UPDATE CITIES */
+if(!region){
+  loadAllCities(citySelect);
+}else{
+  const filtered = greekMunicipalities.filter(m => m.region === region);
+
+  citySelect.innerHTML = '<option value="">Επιλέξτε Πόλη</option>';
+
+  filtered.forEach(c=>{
+    const opt=document.createElement("option");
+    opt.value=c.city;
+    opt.textContent=c.city;
+    citySelect.appendChild(opt);
+  });
+}
+
 });
 
 /* PREF FILTER */
 
+
 prefSelect.addEventListener("change",function(){
 
-citySelect.innerHTML='<option value="">Επιλέξτε Πόλη</option>';
+const region = regionSelect.value;
+const pref = this.value;
 
-const region=regionSelect.value;
+citySelect.innerHTML = '<option value="">Επιλέξτε Πόλη</option>';
 
-const pref=this.value;
-
-const cities=greekMunicipalities
-.filter(m =>
-(!region || m.region===region) &&
-(!pref || m.prefecture===pref)
+const filtered = greekMunicipalities.filter(m =>
+  (!region || m.region === region) &&
+  (!pref || m.prefecture === pref)
 );
 
-cities.forEach(c=>{
-
-const opt=document.createElement("option");
-
-opt.value=c.city;
-
-opt.textContent=c.city;
-
-citySelect.appendChild(opt);
-
+filtered.forEach(c=>{
+  const opt=document.createElement("option");
+  opt.value=c.city;
+  opt.textContent=c.city;
+  citySelect.appendChild(opt);
 });
 
 });

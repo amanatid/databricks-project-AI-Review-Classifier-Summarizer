@@ -366,6 +366,13 @@ select, input[type="text"] {
   background-color:#fefdf9;
 }
 
+
+.city-scroll {
+  height: 150px;        /* fixed box height */
+  overflow-y: auto;     /* internal scroll */
+  border-radius: 1rem;
+}
+
 }
 
 
