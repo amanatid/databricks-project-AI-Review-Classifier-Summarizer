@@ -173,12 +173,7 @@
   <div class="modal-dialog">
     <div class="modal-content rounded-4">
 
-      
-
-      <form action="/admin/edit/<%= item.id %>" method="POST"
-            class="edit-form"
-            data-id="<%= item.id %>"
-            data-diath="<%= item.Diathesimotita || '' %>">  
+      <form action="/admin/edit/<%= item.id %>" method="POST">
 
         <div class="modal-header">
           <h5 class="modal-title">Επεξεργασία</h5>
@@ -269,12 +264,6 @@
             <div id="epimerous-container-<%= item.id %>"></div>
           </div>
 
-          <div class="mb-3">
-              <label class="form-label">Πρόσθετες</label>
-              <textarea class="form-control"
-                        name="Prosthetes"><%= item.Prosthetes %></textarea>
-          </div>
-
           <!-- PERIFEREIA -->
           <div class="mb-3">
             <label class="form-label">Περιφέρεια</label>
@@ -311,7 +300,11 @@
             </select>
           </div>
 
-        
+          <div class="mb-3">
+            <label class="form-label">Πρόσθετες</label>
+            <textarea class="form-control"
+                      name="Prosthetes"><%= item.Prosthetes %></textarea>
+          </div>
 
           <div class="mb-3">
             <label class="form-label">Τιμή (€)</label>
@@ -319,88 +312,11 @@
                    name="Timi" value="<%= item.Timi %>">
           </div>
 
-         <div class="mb-3">
+          <div class="mb-3">
             <label class="form-label">Διαθεσιμότητα</label>
-
-            <!-- MODE -->
-            <select class="form-select mb-2"
-                    id="edit-mode-<%= item.id %>"
-                    onchange="toggleEditMode('<%= item.id %>')">
-              <option value="range">Εύρος ημερών</option>
-              <option value="specific">Συγκεκριμένες ημέρες</option>
-            </select>
-
-            <!-- RANGE -->
-            <div id="edit-range-<%= item.id %>" class="row g-2 mb-2">
-              <div class="col-6">
-                <label>Από</label>
-                <select class="form-select" id="edit-day-from-<%= item.id %>">
-                  <option value="">Επιλέξτε</option>
-                  <% ["Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή","Σάββατο","Κυριακή"].forEach(function(d){ %>
-                    <option value="<%= d %>"><%= d %></option>
-                  <% }) %>
-                </select>
-              </div>
-
-              <div class="col-6">
-                <label>Έως</label>
-                <select class="form-select" id="edit-day-to-<%= item.id %>">
-                  <option value="">Επιλέξτε</option>
-                  <% ["Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή","Σάββατο","Κυριακή"].forEach(function(d){ %>
-                    <option value="<%= d %>"><%= d %></option>
-                  <% }) %>
-                </select>
-              </div>
-            </div>
-
-            <!-- SPECIFIC -->
-            <div id="edit-specific-<%= item.id %>" style="display:none;" class="row g-2 mb-2">
-              <% ["Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή","Σάββατο","Κυριακή"].forEach(function(d){ %>
-                <div class="col-6">
-                  <div class="form-check">
-                    <input type="checkbox"
-                          class="form-check-input edit-day-<%= item.id %>"
-                          value="<%= d %>">
-                    <label class="form-check-label"><%= d %></label>
-                  </div>
-                </div>
-              <% }) %>
-            </div>
-
-            <!-- TIME -->
-              <div class="row g-2">
-  
-          <div class="col-6">
-            <label class="form-label">Ώρα Από</label>
-            <select class="form-select" id="edit-from-<%= item.id %>">
-              <option value="">--:--</option>
-              <% for(let h=0; h<24; h++){ for(let m of [0,30]){ %>
-                <option value="<%= String(h).padStart(2,'0') %>:<%= String(m).padStart(2,'0') %>">
-                  <%= String(h).padStart(2,'0') %>:<%= String(m).padStart(2,'0') %>
-                </option>
-              <% }} %>
-            </select>
-          </div>
-
-          <div class="col-6">
-            <label class="form-label">Ώρα Έως</label>
-            <select class="form-select" id="edit-to-<%= item.id %>">
-              <option value="">--:--</option>
-              <% for(let h=0; h<24; h++){ for(let m of [0,30]){ %>
-                <option value="<%= String(h).padStart(2,'0') %>:<%= String(m).padStart(2,'0') %>">
-                  <%= String(h).padStart(2,'0') %>:<%= String(m).padStart(2,'0') %>
-                </option>
-              <% }} %>
-            </select>
-          </div>
-
-       </div>
-
-
-            <!-- FINAL VALUE -->
-            <input type="hidden"
-                  name="Diathesimotita"
-                  id="edit-diath-<%= item.id %>">
+            <input type="text" class="form-control"
+                   name="Diathesimotita"
+                   value="<%= item.Diathesimotita %>">
           </div>
 
           <div class="mb-3">
@@ -430,13 +346,10 @@
 
 <%- include("partials/footer.ejs") %>
 
-
-
 <script>
   window.greekMunicipalities = <%- JSON.stringify(greekMunicipalities) %>;
 </script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
 const optionsMap = <%- JSON.stringify(optionsMap) %>;
@@ -593,138 +506,86 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
+</script>
 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
 
+  document.querySelectorAll(".region-select").forEach(regionSelect => {
 
+    const id = regionSelect.dataset.id;
+    const prefSelect = document.querySelector(`.pref-select[data-id='${id}']`);
+    const citySelect = document.querySelector(`.city-select[data-id='${id}']`);
 
+    const currentRegion = regionSelect.value;
+    const currentPref = prefSelect.value;
+    const currentCity = citySelect.value;
 
-function toggleEditMode(id){
-  const mode = document.getElementById(`edit-mode-${id}`).value;
+    // ================= INIT REGIONS =================
+    regionSelect.innerHTML = '<option value="">Επιλέξτε Περιφέρεια</option>';
 
-  const range = document.getElementById(`edit-range-${id}`);
-  const specific = document.getElementById(`edit-specific-${id}`);
+    const regions = [...new Set(greekMunicipalities.map(m => m.region))];
 
-  if(mode === "range"){
-    range.style.display = "flex";
-    specific.style.display = "none";
-  } else {
-    range.style.display = "none";
-    specific.style.display = "flex";
-  }
-}
+    regions.forEach(r => {
+      const opt = document.createElement("option");
+      opt.value = r;
+      opt.textContent = r;
+      if (r === currentRegion) opt.selected = true;
+      regionSelect.appendChild(opt);
+    });
 
+    // ================= LOAD PREFECTURES =================
+    function loadPrefectures(selectedRegion, selectedPref = null) {
+      prefSelect.innerHTML = '<option value="">Επιλέξτε Νομό</option>';
+      citySelect.innerHTML = '<option value="">Επιλέξτε Πόλη</option>';
 
-// ================= PARSE EXISTING DATA =================
-document.querySelectorAll(".modal").forEach(modal => {
+      const prefs = [...new Set(
+        greekMunicipalities
+          .filter(m => !selectedRegion || m.region === selectedRegion)
+          .map(m => m.prefecture)
+      )];
 
-  modal.addEventListener("show.bs.modal", function () {
-
-    const form = this.querySelector(".edit-form");
-    const id = form.dataset.id;
-    const raw = form.dataset.diath;
-
-    if(!raw) return;
-
-    const timeMatch = raw.match(/\((.*?)\)/);
-
-    let timeFrom = "";
-    let timeTo = "";
-
-    if(timeMatch){
-      const times = timeMatch[1]
-        .split("-")
-        .map(t => t.trim());   // IMPORTANT
-
-      timeFrom = times[0] || "";
-      timeTo = times[1] || "";
-    }
-
-    const daysPart = raw.replace(/\(.*?\)/, "").trim();
-
-    if(daysPart.includes("–")){
-      document.getElementById(`edit-mode-${id}`).value = "range";
-      toggleEditMode(id);
-
-      const [from, to] = daysPart.split("–");
-
-      document.getElementById(`edit-day-from-${id}`).value = from.trim();
-      document.getElementById(`edit-day-to-${id}`).value = to.trim();
-
-    } else {
-
-      document.getElementById(`edit-mode-${id}`).value = "specific";
-      toggleEditMode(id);
-
-      const selectedDays = daysPart.split(",").map(d => d.trim());
-
-      document.querySelectorAll(`.edit-day-${id}`).forEach(cb => {
-        cb.checked = selectedDays.includes(cb.value);
+      prefs.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p;
+        opt.textContent = p;
+        if (p === selectedPref) opt.selected = true;
+        prefSelect.appendChild(opt);
       });
     }
 
-    document.getElementById(`edit-from-${id}`).value = timeFrom;
-    document.getElementById(`edit-to-${id}`).value = timeTo;
+    // ================= LOAD CITIES =================
+    function loadCities(selectedRegion, selectedPref, selectedCity = null) {
+      citySelect.innerHTML = '<option value="">Επιλέξτε Πόλη</option>';
+
+      const cities = greekMunicipalities.filter(m =>
+        (!selectedRegion || m.region === selectedRegion) &&
+        (!selectedPref || m.prefecture === selectedPref)
+      );
+
+      cities.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.city;
+        opt.textContent = c.city;
+        if (c.city === selectedCity) opt.selected = true;
+        citySelect.appendChild(opt);
+      });
+    }
+
+    // ================= INITIAL LOAD =================
+    loadPrefectures(currentRegion, currentPref);
+    loadCities(currentRegion, currentPref, currentCity);
+
+    // ================= EVENTS =================
+    regionSelect.addEventListener("change", () => {
+      loadPrefectures(regionSelect.value);
+    });
+
+    prefSelect.addEventListener("change", () => {
+      loadCities(regionSelect.value, prefSelect.value);
+    });
 
   });
 
 });
-
-
-// ================= BUILD VALUE BEFORE SUBMIT =================
-document.querySelectorAll(".edit-form").forEach(form => {
-
-  form.addEventListener("submit", function(e){
-
-    const id = this.dataset.id;
-
-    const mode = document.getElementById(`edit-mode-${id}`).value;
-    const dayFrom = document.getElementById(`edit-day-from-${id}`).value;
-    const dayTo = document.getElementById(`edit-day-to-${id}`).value;
-    const checkboxes = document.querySelectorAll(`.edit-day-${id}`);
-    const timeFrom = document.getElementById(`edit-from-${id}`).value;
-    const timeTo = document.getElementById(`edit-to-${id}`).value;
-
-    const weekdays = {
-      "Δευτέρα":1,"Τρίτη":2,"Τετάρτη":3,"Πέμπτη":4,
-      "Παρασκευή":5,"Σάββατο":6,"Κυριακή":7
-    };
-
-    let availability = "";
-
-    if(mode === "range"){
-      if(!dayFrom || !dayTo || weekdays[dayFrom] > weekdays[dayTo]){
-        alert("Λάθος εύρος ημερών");
-        e.preventDefault();
-        return;
-      }
-      availability = `${dayFrom}–${dayTo}`;
-    } else {
-      const days = Array.from(checkboxes)
-        .filter(c=>c.checked)
-        .map(c=>c.value);
-
-      if(days.length === 0){
-        alert("Επιλέξτε τουλάχιστον μία ημέρα");
-        e.preventDefault();
-        return;
-      }
-
-      availability = days.join(", ");
-    }
-
-    if(!timeFrom || !timeTo || timeFrom >= timeTo){
-      alert("Λάθος ώρα");
-      e.preventDefault();
-      return;
-    }
-
-    availability += ` (${timeFrom}-${timeTo})`;
-
-    document.getElementById(`edit-diath-${id}`).value = availability;
-
-  });
-
-});
-
-
 </script>
