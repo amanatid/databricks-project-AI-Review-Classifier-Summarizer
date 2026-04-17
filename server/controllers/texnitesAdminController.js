@@ -8,7 +8,7 @@ import { admingetallTechnicians,
 
 import { professionMap, optionsMap} from "../public/data/professionMap.js";
 import bcrypt from "bcryptjs"; 
-
+import { greekMunicipalities } from "../public/data/greekMunicipalities.js";
 
 
 
@@ -19,7 +19,8 @@ export const adminPage = async (req, res) => {
    res.render("admin-dashboard.ejs",{
      cards: cards,  
      professionMap:professionMap,
-     optionsMap:optionsMap
+     optionsMap:optionsMap,
+     greekMunicipalities:greekMunicipalities,
   });
   /*res.json({
     message: "Welcome to the admin page",

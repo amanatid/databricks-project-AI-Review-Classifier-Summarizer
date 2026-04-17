@@ -10,15 +10,19 @@ import { getAllTexnites,
 import { sendContactEmail } from "../services/emailService.js";
 import { professionMap, optionsMap} from "../public/data/professionMap.js";
 import bcrypt from "bcryptjs"; 
-
+import { greekMunicipalitiesExport } from '../public/data/greekMunicipalities.js';
+import { greekMunicipalities } from "../public/data/greekMunicipalities.js";
 
 
 export const getHomePage = async (req, res, next) => {
   try {
     const data = await getAllTexnites();
 
-    const uniquePoli = [...new Set(data.map(item => item.Poli))];
-
+  //  const uniquePoli = [...new Set(data.map(item => item.Poli))];
+  
+      const uniquePoli = [
+        ...new Set(greekMunicipalitiesExport.map(m => m.city))
+      ].sort();
     //----------pagination----------------------//
     //http://localhost:3000/?page=2
    /* const page = parseInt(req.query.page) || 1;
@@ -64,8 +68,8 @@ export const getHomePage = async (req, res, next) => {
 export const submitSearch = async (req, res, next) => {
   try {
     const { speciality, city } = req.body;
-    let price = req.body.price || 1000000; // default high value
-   
+   // let price = req.body.price || 1000000; // default high value
+    let price = req.body.price ?? 1000000; 
     // Validation
     if (!speciality || !city) {
       return res.status(400).json({
@@ -183,6 +187,7 @@ export const submitTechnician = async (req, res, next) => {
      
 
   res.render("technicianform.ejs", {
+      greekMunicipalities:greekMunicipalities,
       message: "Τα στοιχεία σας στάλθηκαν επιτυχώς! H Καταχώρηση σας είναι Δωρεάν!",
       submitbutton: true,
       optionsMap:optionsMap
@@ -260,7 +265,8 @@ export const submitTechnician1 = async (req, res, next) => {
   res.render("technicianformwithoutaccount.ejs", {
       message: "Τα στοιχεία σας στάλθηκαν επιτυχώς! H Καταχώρηση σας είναι Δωρεάν!",
       submitbutton: true,
-      optionsMap:optionsMap
+      optionsMap:optionsMap,
+      greekMunicipalities:greekMunicipalities,
     });
 
   } catch (error) {
@@ -282,7 +288,8 @@ export const mycardsnew  = async (req, res, next) => {
    res.render("mycards.ejs",{
      techniciancards: techniciancards,
      optionsMap:optionsMap,
-     professionMap:professionMap
+     professionMap:professionMap,
+     greekMunicipalities: greekMunicipalities,
     }); 
   } catch (error){
      next(error);
@@ -304,7 +311,8 @@ export const showterms = async (req, res) => {
 export const collabpage = async (req, res) => {
   //const {username, userId, role} = req.userInfo;
   res.render("technicianform.ejs",{
-    optionsMap:optionsMap
+    optionsMap:optionsMap,
+    greekMunicipalities: greekMunicipalities,
   });
 };
 
@@ -314,7 +322,8 @@ export const collabpage = async (req, res) => {
 export const collabpage1 = async (req, res) => {
  // console.log("Technician Without Account");
   res.render("technicianformwithoutaccount.ejs",{
-    optionsMap:optionsMap
+    optionsMap:optionsMap,
+    greekMunicipalities: greekMunicipalities,
   });
 };
 
