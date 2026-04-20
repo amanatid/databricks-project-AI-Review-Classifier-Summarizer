@@ -11,12 +11,13 @@ body {
 .custom-navbar {
   background-color: #d1e7dd; /* same as alert-success */
   border-bottom: 1px solid rgba(0,0,0,0.05);
+ 
 }
 
 /* Text colors */
-.custom-navbar .navbar-brand span,
+.custom-navbar  span,
 .custom-navbar .nav-link {
-  color: #0f5132 !important; /* darker green */
+  color: #212529;
   font-weight: 600;
 }
 
@@ -307,6 +308,91 @@ select, input[type="text"] {
   width:600px;
 }
 
+.custom-search-btn {
+  background: linear-gradient(
+    135deg,
+    #2e7d32 0%,
+    #4caf50 25%,
+    #7bc96f 55%,
+    #a5d6a7 80%,
+    #81c784 100%
+  );
+  border: none;
+  color: #f4fff6; /* 👈 softer than white */
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  transition: all 0.25s ease;
+}
+
+.custom-search-btn {
+  background: linear-gradient(
+    135deg,
+    #2e7d32 0%,
+    #4caf50 25%,
+    #7bc96f 55%,
+    #a5d6a7 80%,
+    #81c784 100%
+  );
+  border: none;
+  color: #ffffff;
+  transition: all 0.25s ease;
+}
+
+/* 👇 Text improvement */
+.custom-search-btn .btn-text {
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+
+.custom-search-btn {
+  background: linear-gradient(
+    135deg,
+    #2e7d32 0%,
+    #4caf50 25%,
+    #7bc96f 55%,
+    #a5d6a7 80%,
+    #81c784 100%
+  );
+  border: none;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 12px 18px;
+  letter-spacing: 0.3px;
+
+  /* 👇 makes text pop on gradient */
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+
+  transition: all 0.25s ease;
+}
+
+/* icon tuning */
+.custom-search-btn i {
+  font-size: 1.1rem;
+}
+
+/* hover = richer + more depth */
+.custom-search-btn:hover {
+  background: linear-gradient(
+    135deg,
+    #256628 0%,
+    #3d9440 30%,
+    #66bb6a 60%,
+    #81c784 100%
+  );
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+}
+
+/* click feel */
+.custom-search-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+
  @media (max-width: 576px) {
 .align-up {
   position: relative;
@@ -372,6 +458,23 @@ select, input[type="text"] {
   overflow-y: auto;     /* internal scroll */
   border-radius: 1rem;
 }
+
+.navbar-brand {
+  color: #212529 !important; /* Bootstrap text-dark */
+}
+
+.btn-custom-green {
+  background-color: #2FA84F;
+  border-color: #2FA84F;
+  color: #fff;
+}
+
+.btn-custom-green:hover {
+  background-color: #258a40;
+  border-color: #258a40;
+}
+
+
 
 }
 

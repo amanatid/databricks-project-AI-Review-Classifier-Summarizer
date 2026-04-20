@@ -11,12 +11,14 @@ export const getAllTexnites = async () => {
   return data;
 };
 
-export const searchTexnites = async (speciality, city, price) => {
+export const searchTexnites = async (speciality,  region, perfecture, city, price) => {
   //console.log(speciality, " ", city, " ", price)
   let query =await supabase
     .from("texnitestest")
     .select("*")
     .eq("Eidikotites", speciality)
+    .eq("Perifereia", region)
+    .eq("Nomos", perfecture)
     .eq("Poli", city);
 
   // Future price filter
@@ -31,6 +33,24 @@ export const searchTexnites = async (speciality, city, price) => {
   return data;
 };
 
+
+export const copydatalink  = async  (speciality,  region, prefecture, city) => {
+
+  
+  const { data, error } = await supabase
+    .from('texnitestest')
+    .select('*')
+    .eq('Eidikotites', speciality)
+    .eq('Perifereia', region)
+    .eq('Nomos', prefecture)
+    .eq('Poli', city);
+
+    
+  if (error) throw error;
+
+  return data;
+  
+}
 
 export const createTechnician = async (technicianData) => {
   const { data, error } = await supabase

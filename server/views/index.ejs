@@ -29,57 +29,61 @@
   <div class="container my-6 search-section">
     
    
-    <form class="row g-4"  onsubmit="handleSubmit(event)" >
+    <form class="row g-3 align-items-end" onsubmit="handleSubmit(event)">
 
-      <div  class="col-md-1" >
-      <img src="images/search.png"  height="65" alt="search">
-    </div>  
-   
-      <div class="col-md-4">
-        <label for="speciality" class="form-label">Ειδικότητα</label>
-        <select id="speciality"  name="speciality"  class="form-select">
-          
-          <option selected disabled>Επιλέξτε Ειδικότητα</option>
-            <% Object.keys(optionsMap).forEach(function(cat){ %>
-                      <option>
-                        <%= cat %>
-                      </option>
-            <% }) %>
-         
-        </select>
-      </div>
-     
-     
-      
-      <div class="col-md-4">
-        <label for="city" class="form-label">Πόλη</label>
-        <select id="city" name="city"   class="form-select">
-          <option selected disabled>Επιλέξτε Πόλη</option>
-          <% for (var i = 0; i < uniquePoli.length; i++) { %>
-          
-          <option> <%=  uniquePoli[i] %></option>
-         
-          <% } %>
-        </select>
-      </div>
-      
-      <!--change it to include the search  box Timi/price--> 
-      <!-- <div class="col-md-2">
-        <label for="price" class="form-label">Μέγιστη Τιμή (€)</label>
-        <input type="number" name="price"  class="form-control" id="price" placeholder="π.χ. 50">
-      </div> -->
-      
-    
-     <div class="col-md-3 d-flex align-items-end">
-  <button class="btn btn-success w-100 py-2 rounded-pill shadow-sm" type="submit">
-    <i class="bi bi-search"></i> Αναζήτηση Τεχνικών
-  </button> 
-</div>
+          <!-- Icon -->
+          <div class="col-12 col-md-1 d-flex justify-content-center">
+            <img src="images/search.png" height="50" alt="search">
+          </div>
 
-      <!-- erase this-->
-      <div  id="price" > </div>
- 
+          <!-- Ειδικότητα -->
+          <div class="col-12 col-md-2">
+            <label class="form-label">Ειδικότητα</label>
+            <select id="speciality" name="speciality" class="form-select">
+              <option selected disabled>Επιλέξτε</option>
+              <% Object.keys(optionsMap).forEach(function(cat){ %>
+                <option><%= cat %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <!-- Περιφέρεια -->
+          <div class="col-12 col-md-2">
+            <label class="form-label">Περιφέρεια</label>
+            <select id="region" name="region" class="form-select">
+              <option value="" selected disabled>Επιλέξτε Περιφέρεια</option>   
+            </select>
+          </div>
+
+          <!-- Νομός -->
+          <div class="col-12 col-md-2">
+            <label class="form-label">Νομός</label>
+              <select id="prefecture" class="form-select">
+                <option value="" selected disabled>Επιλέξτε Νομό</option>
+              </select>
+          </div>
+
+          <!-- Πόλη -->
+          <div class="col-12 col-md-2">
+            <label class="form-label">Πόλη</label>
+            <select id="city" name="city" class="form-select">
+              <option value="" selected disabled>Επιλέξτε Πόλη</option>
+            </select>
+          </div>
+
+        
+
+        <!-- Button -->
+        <div class="col-12 col-md-3">
+         <button class="btn w-100 rounded-pill custom-search-btn">
+  <i class="bi bi-search"></i> 
+  <span  style=color:white>Αναζήτηση Τεχνικών</span>
+</button>
+        </div>
+
     </form>
+
+      
 
   </div>
 
@@ -167,12 +171,69 @@
   
   
   
-
+<script>
+  const municipalities = <%- JSON.stringify(greekMunicipalities) %>;
+</script>
   
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
  
 
+<script>
+  const regionSelect = document.getElementById("region");
+  const prefectureSelect = document.getElementById("prefecture");
+  const citySelect = document.getElementById("city");
 
+  // Unique Regions
+  const regions = [...new Set(municipalities.map(m => m.region))];
+
+  regions.forEach(r => {
+    const option = document.createElement("option");
+    option.value = r;
+    option.textContent = r;
+    regionSelect.appendChild(option);
+  });
+
+  // When Region changes → filter Prefectures
+  regionSelect.addEventListener("change", () => {
+    const selectedRegion = regionSelect.value;
+
+    prefectureSelect.innerHTML = '<option disabled selected>Επιλέξτε Νομό</option>';
+    citySelect.innerHTML = '<option disabled selected>Επιλέξτε Πόλη</option>';
+
+    const prefectures = [
+      ...new Set(
+        municipalities
+          .filter(m => m.region === selectedRegion)
+          .map(m => m.prefecture)
+      )
+    ];
+
+    prefectures.forEach(p => {
+      const option = document.createElement("option");
+      option.value = p;
+      option.textContent = p;
+      prefectureSelect.appendChild(option);
+    });
+  });
+
+  // When Prefecture changes → filter Cities
+  prefectureSelect.addEventListener("change", () => {
+    const selectedPrefecture = prefectureSelect.value;
+
+    citySelect.innerHTML = '<option disabled selected>Επιλέξτε Πόλη</option>';
+
+    const cities = municipalities
+      .filter(m => m.prefecture === selectedPrefecture)
+      .map(m => m.city);
+
+    cities.forEach(c => {
+      const option = document.createElement("option");
+      option.value = c;
+      option.textContent = c;
+      citySelect.appendChild(option);
+    });
+  });
+</script>
 
 <script>
   ///////////////////
@@ -183,13 +244,17 @@
     event.preventDefault();
 
     const speciality = document.getElementById('speciality').value;
+    
+    //const price = document.getElementById('price').value;
+    const region = document.getElementById('region').value;
+    const prefecture = document.getElementById('prefecture').value;
     const city = document.getElementById('city').value;
-    const price = document.getElementById('price').value;
+    
 
     const response = await fetch('/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ speciality, city, price })
+      body: JSON.stringify({ speciality, region, prefecture, city})
     });
 
     const result = await response.json();
@@ -205,7 +270,15 @@
        /////////////////////////////////////////////////////////////////////////////////
       // Build and show the shareable link
       //const shareURL = `${window.location.origin}${window.location.pathname}search?speciality=${encodeURIComponent(speciality)}&city=${encodeURIComponent(city)}`;
-      const shareURL = `${window.location.origin}${window.location.pathname}search?speciality=${speciality}&city=${city}`;
+      //const shareURL = `${window.location.origin}${window.location.pathname}search?speciality=${speciality}&city=${city}`;
+        const params = new URLSearchParams();
+
+        if (speciality) params.append('speciality', speciality);
+        if (region) params.append('region', region);
+        if (prefecture) params.append('prefecture', prefecture);
+        if (city) params.append('city', city);
+
+        const shareURL = `${window.location.origin}/search?${params.toString()}`;
       console.log(shareURL)
 
       generatedShareURL = shareURL;

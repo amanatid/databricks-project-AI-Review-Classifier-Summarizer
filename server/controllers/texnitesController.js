@@ -6,6 +6,7 @@ import { getAllTexnites,
          getMyTechnicianDataWithAccount,
          updatemycard, deletecard,
          profilemodeldeleteaccount,
+         copydatalink,
         } from "../models/texnitesModel.js";
 import { sendContactEmail } from "../services/emailService.js";
 import { professionMap, optionsMap} from "../public/data/professionMap.js";
@@ -54,8 +55,9 @@ export const getHomePage = async (req, res, next) => {
 
     res.render("index.ejs", {
       data,
-      uniquePoli,
-      optionsMap:optionsMap
+     // uniquePoli,
+      optionsMap:optionsMap,
+      greekMunicipalities:greekMunicipalities,
     });
 
   } catch (error) {
@@ -67,17 +69,27 @@ export const getHomePage = async (req, res, next) => {
 
 export const submitSearch = async (req, res, next) => {
   try {
-    const { speciality, city } = req.body;
+    ///const { speciality, city } = req.body;
+    const { speciality, region, prefecture, city } = req.body;
+    console.log(req.body)  ;
+    let query = {};
+
+    if (speciality) query.Eidikotita = speciality;
+    if (region) query.Perifereia = region;
+    if (prefecture) query.Nomos = prefecture;
+    if (city) query.Poli = city;
+
+    console.log(query);
    // let price = req.body.price || 1000000; // default high value
     let price = req.body.price ?? 1000000; 
     // Validation
-    if (!speciality || !city) {
+    if (!speciality || !city || !region || !prefecture ) {
       return res.status(400).json({
         message: "Παρακαλώ συμπληρώστε όλα τα πεδία."
       });
     }
 
-    const data = await searchTexnites(speciality, city, price);
+    const data = await searchTexnites(speciality,  region, prefecture, city, price);
 
     if (!data || data.length === 0) {
       return res.status(404).json({
@@ -95,6 +107,32 @@ export const submitSearch = async (req, res, next) => {
     next(error);
   }
 };
+
+
+export  const copylink = async (req, res ) =>{
+
+  const { speciality, region, prefecture, city } = req.query;
+  console.log('request query')
+  console.log(req.query);
+
+
+   const data =  await copydatalink(speciality, region, prefecture, city);
+
+  if (!data || data.length === 0) {
+    return res.status(404).json({ message: 'No matching records found.' });
+  }
+
+  console.log(data)
+
+  res.render('search.ejs', {
+    results: data,
+    speciality: speciality,
+    region:region,
+    prefecture:prefecture,
+    city: city,
+  });
+
+}
 
 
 export const submitContact = async (req, res) => {

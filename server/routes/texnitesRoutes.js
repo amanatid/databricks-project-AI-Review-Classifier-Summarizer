@@ -17,6 +17,7 @@ import {
     profilechangepassword,
     profiledeleteaccount,
     submitTechnician1,
+    copylink,
    /* adminPage,
     admineditmycard,
     admindeletemycard,*/
@@ -67,6 +68,9 @@ router.post("/submitepikoinwnia", submitContact);
 router.get("/simvoules", advice);
 router.get("/terms",showterms);
 router.get("/epikoinwnia",contactpage);
+
+router.get('/search', copylink );
+
 
 
 
