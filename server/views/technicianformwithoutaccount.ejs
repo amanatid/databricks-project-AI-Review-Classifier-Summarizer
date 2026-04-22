@@ -183,7 +183,7 @@ name="services[${index}][Prosthetes]" required>
 
 <select id="region-${index}" class="form-select mb-2" name="services[${index}][Perifereia]" required>
 
-<option value="">Όλες</option>
+<option value="">Όλες οι Περιφέρειες</option>
 
 
 </select>
@@ -194,7 +194,7 @@ name="services[${index}][Prosthetes]" required>
 name="services[${index}][Nomos]" required
 >
 
-<option value="">Όλοι</option>
+<option value="">Όλοι οι Νομοί</option>
 
 </select>
 
@@ -205,7 +205,7 @@ name="services[${index}][Nomos]" required
 id="city-${index}"
 name="services[${index}][Poli]" required>
 
-<option value="">Επιλέξτε Πόλη</option>
+<option value="">🔄 Όλες οι Πόλεις</option>
 
 </select>
 
@@ -329,7 +329,7 @@ loadAllCities(citySelect);
 
 function loadAllCities(select){
 
-  select.innerHTML = '<option value="">Επιλέξτε Πόλη</option>';
+  select.innerHTML = '<option value="">🔄 Όλες οι Πόλεις</option>';
 
   greekMunicipalities.forEach(m => {
 
@@ -366,7 +366,7 @@ regionSelect.appendChild(opt);
 
 regionSelect.addEventListener("change",function(){
 
-prefSelect.innerHTML='<option value="">Όλοι</option>';
+prefSelect.innerHTML='<option value="">Όλοι οι Νομοί</option>';
 
 const region=this.value;
 
@@ -388,7 +388,7 @@ prefSelect.appendChild(opt);
 
 prefSelect.addEventListener("change",function(){
 
-citySelect.innerHTML='<option value="">Επιλέξτε Πόλη</option>';
+citySelect.innerHTML='<option value="">🔄 Όλες οι Πόλεις</option>';
 
 const region=regionSelect.value;
 
@@ -416,30 +416,58 @@ citySelect.appendChild(opt);
 
 /* CITY → MAP */
 
-citySelect.addEventListener("change",async function(){
+/* CITY → AUTO-FILL + RESET + MAP */
 
-const city=this.value;
+citySelect.addEventListener("change", async function(){
 
-if(!city) return;
+const city = this.value;
 
-const res=await fetch(
+/* 🔄 RESET CASE (important) */
+if (!city) {
+
+  // Reset Region
+  regionSelect.value = "";
+
+  // Reset Prefecture
+  prefSelect.innerHTML = '<option value="">Όλοι οι Νομοί</option>';
+
+  // Reload ALL cities
+  loadAllCities(citySelect);
+
+  return;
+}
+
+/* ⚡ AUTO-FILL CASE */
+const match = greekMunicipalities.find(m => m.city === city);
+
+if (match) {
+  regionSelect.value = match.region;
+
+  // Trigger region change → loads prefectures
+  regionSelect.dispatchEvent(new Event("change"));
+
+  setTimeout(() => {
+    prefSelect.value = match.prefecture;
+  }, 50);
+}
+
+/* 🗺 MAP (your existing logic) */
+const res = await fetch(
 `https://nominatim.openstreetmap.org/search?format=json&countrycodes=gr&q=${city}`
 );
 
-const data=await res.json();
+const data = await res.json();
 
 if(data.length){
 
-const lat=data[0].lat;
+  const lat = data[0].lat;
+  const lon = data[0].lon;
 
-const lon=data[0].lon;
+  map.setView([lat,lon],11);
 
-map.setView([lat,lon],11);
+  if(marker) map.removeLayer(marker);
 
-if(marker) map.removeLayer(marker);
-
-marker=L.marker([lat,lon]).addTo(map);
-
+  marker = L.marker([lat,lon]).addTo(map);
 }
 
 });

@@ -51,7 +51,7 @@
           <div class="col-12 col-md-2">
             <label class="form-label">Περιφέρεια</label>
             <select id="region" name="region" class="form-select">
-              <option value="" selected disabled>Επιλέξτε Περιφέρεια</option>   
+              <option value="">Όλες οι Περιφέρειες</option>   
             </select>
           </div>
 
@@ -59,7 +59,7 @@
           <div class="col-12 col-md-2">
             <label class="form-label">Νομός</label>
               <select id="prefecture" class="form-select">
-                <option value="" selected disabled>Επιλέξτε Νομό</option>
+               <option value="">Όλοι οι Νομοί</option>
               </select>
           </div>
 
@@ -67,7 +67,7 @@
           <div class="col-12 col-md-2">
             <label class="form-label">Πόλη</label>
             <select id="city" name="city" class="form-select">
-              <option value="" selected disabled>Επιλέξτε Πόλη</option>
+               <option value="">Όλες οι Πόλεις</option>
             </select>
           </div>
 
@@ -76,9 +76,9 @@
         <!-- Button -->
         <div class="col-12 col-md-3">
          <button class="btn w-100 rounded-pill custom-search-btn">
-  <i class="bi bi-search"></i> 
-  <span  style=color:white>Αναζήτηση Τεχνικών</span>
-</button>
+            <i class="bi bi-search"></i> 
+            <span  style=color:white>Αναζήτηση Τεχνικών</span>
+         </button>
         </div>
 
     </form>
@@ -161,7 +161,7 @@
   
   <!-- Call to Action -->
   <div class="container text-center my-5">
-    <a href="./become-technician" class="btn btn-lg btn-success rounded-pill px-5 shadow-sm">🤝 Γίνε Συνεργάτης</a>
+    <a href="./become-technician" class="btn btn-lg btn-success rounded-pill px-5 shadow-sm custom-search-btn">🤝 Γίνε Συνεργάτης</a>
   </div>
 
   
@@ -186,6 +186,16 @@
   // Unique Regions
   const regions = [...new Set(municipalities.map(m => m.region))];
 
+    // Populate ALL cities initially
+  const allCities = [...new Set(municipalities.map(m => m.city))];
+
+  allCities.forEach(c => {
+    const option = document.createElement("option");
+    option.value = c;
+    option.textContent = c;
+    citySelect.appendChild(option);
+  });
+
   regions.forEach(r => {
     const option = document.createElement("option");
     option.value = r;
@@ -194,45 +204,58 @@
   });
 
   // When Region changes → filter Prefectures
-  regionSelect.addEventListener("change", () => {
-    const selectedRegion = regionSelect.value;
+ regionSelect.addEventListener("change", () => {
+  const selectedRegion = regionSelect.value;
 
-    prefectureSelect.innerHTML = '<option disabled selected>Επιλέξτε Νομό</option>';
-    citySelect.innerHTML = '<option disabled selected>Επιλέξτε Πόλη</option>';
+  prefectureSelect.innerHTML = '<option value="">Όλοι οι Νομοί</option>';
+  citySelect.innerHTML = '<option value="">Όλες οι Πόλεις</option>';
 
-    const prefectures = [
-      ...new Set(
-        municipalities
-          .filter(m => m.region === selectedRegion)
-          .map(m => m.prefecture)
-      )
-    ];
+  let filtered = municipalities;
 
-    prefectures.forEach(p => {
-      const option = document.createElement("option");
-      option.value = p;
-      option.textContent = p;
-      prefectureSelect.appendChild(option);
-    });
+  if (selectedRegion) {
+    filtered = municipalities.filter(m => m.region === selectedRegion);
+  }
+
+  const prefectures = [...new Set(filtered.map(m => m.prefecture))];
+  const cities = [...new Set(filtered.map(m => m.city))];
+
+  prefectures.forEach(p => {
+    const option = document.createElement("option");
+    option.value = p;
+    option.textContent = p;
+    prefectureSelect.appendChild(option);
   });
 
-  // When Prefecture changes → filter Cities
-  prefectureSelect.addEventListener("change", () => {
-    const selectedPrefecture = prefectureSelect.value;
-
-    citySelect.innerHTML = '<option disabled selected>Επιλέξτε Πόλη</option>';
-
-    const cities = municipalities
-      .filter(m => m.prefecture === selectedPrefecture)
-      .map(m => m.city);
-
-    cities.forEach(c => {
-      const option = document.createElement("option");
-      option.value = c;
-      option.textContent = c;
-      citySelect.appendChild(option);
-    });
+  cities.forEach(c => {
+    const option = document.createElement("option");
+    option.value = c;
+    option.textContent = c;
+    citySelect.appendChild(option);
   });
+});
+
+
+prefectureSelect.addEventListener("change", () => {
+  const selectedPrefecture = prefectureSelect.value;
+
+  citySelect.innerHTML = '<option value="">Όλες οι Πόλεις</option>';
+
+  let filtered = municipalities;
+
+  if (selectedPrefecture) {
+    filtered = municipalities.filter(m => m.prefecture === selectedPrefecture);
+  }
+
+  const cities = [...new Set(filtered.map(m => m.city))];
+
+  cities.forEach(c => {
+    const option = document.createElement("option");
+    option.value = c;
+    option.textContent = c;
+    citySelect.appendChild(option);
+  });
+}); 
+
 </script>
 
 <script>
@@ -364,6 +387,30 @@
   });
 }
 
+
+citySelect.addEventListener("change", () => {
+  const selectedCity = citySelect.value;
+
+  // If user selects "Όλες οι Πόλεις"
+  if (!selectedCity) {
+
+    // Reset Region & Prefecture
+    regionSelect.value = "";
+    prefectureSelect.innerHTML = '<option value="">Όλοι οι Νομοί</option>';
+
+    // Reload ALL cities
+    citySelect.innerHTML = '<option value="">Όλες οι Πόλεις</option>';
+
+    const allCities = [...new Set(municipalities.map(m => m.city))];
+
+    allCities.forEach(c => {
+      const option = document.createElement("option");
+      option.value = c;
+      option.textContent = c;
+      citySelect.appendChild(option);
+    });
+  }
+});
 
  /////////////////////////////////////////////////////////////////////////////////
 

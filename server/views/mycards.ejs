@@ -198,9 +198,10 @@
                     <label class="form-label">Επιλογή Πόλης</label>
 
                     <select class="form-select city-select"
-                            name="Poli"
-                            data-id="<%= item.id %>"
-                            required>
+                        name="Poli"
+                        data-id="<%= item.id %>"
+                        data-selected="<%= item.Poli %>"
+                        required>
 
                     <option value="<%= item.Poli %>"><%= item.Poli %></option>
 
@@ -421,7 +422,7 @@ prefSelect.appendChild(opt);
 
 function populateCities(region, pref, citySelect){
 
-citySelect.innerHTML = '<option value="">Επιλέξτε Πόλη</option>';
+citySelect.innerHTML = '<option value="">🔄 Όλες οι Πόλεις</option>';
 
 const cities = greekMunicipalities.filter(m =>
 
@@ -443,6 +444,18 @@ citySelect.appendChild(opt);
 
 }
 
+function loadAllCitiesEdit(select){
+
+  select.innerHTML = '<option value="">🔄 Όλες οι Πόλεις</option>';
+
+  greekMunicipalities.forEach(m => {
+    const opt = document.createElement("option");
+    opt.value = m.city;
+    opt.textContent = m.city;
+    select.appendChild(opt);
+  });
+
+}
 
 
 document.addEventListener("DOMContentLoaded", function(){
@@ -456,6 +469,9 @@ document.querySelector(`.pref-select[data-id="${id}"]`);
 
 const citySelect =
 document.querySelector(`.city-select[data-id="${id}"]`);
+
+// 🔥 LOAD ALL CITIES BY DEFAULT (LIKE MAIN FORM)
+loadAllCitiesEdit(citySelect);
 
 /* -------- LOAD REGIONS -------- */
 
@@ -476,7 +492,7 @@ regionSelect.addEventListener("change", function(){
 
 populatePrefectures(this.value, prefSelect);
 
-citySelect.innerHTML = '<option value="">Επιλέξτε Πόλη</option>';
+populateCities(this.value, "", citySelect);
 
 });
 
@@ -485,6 +501,41 @@ citySelect.innerHTML = '<option value="">Επιλέξτε Πόλη</option>';
 prefSelect.addEventListener("change", function(){
 
 populateCities(regionSelect.value, this.value, citySelect);
+
+});
+
+// 🔥 CITY CHANGE (LIKE MAIN FORM)
+
+
+citySelect.addEventListener("change", function(){
+
+  const city = this.value;
+
+  if(!city){
+
+    // ✅ RESET EVERYTHING
+    regionSelect.value = "";
+
+    prefSelect.innerHTML = '<option value="">Όλοι οι Νομοί</option>';
+
+    loadAllCitiesEdit(citySelect);
+
+    return;
+  }
+
+  const match = greekMunicipalities.find(m => m.city === city);
+
+  if(match){
+
+    regionSelect.value = match.region;
+
+    populatePrefectures(match.region, prefSelect);
+    prefSelect.value = match.prefecture;
+
+    populateCities(match.region, match.prefecture, citySelect);
+
+    citySelect.value = city;
+  }
 
 });
 
@@ -497,8 +548,52 @@ document.querySelectorAll(".modal").forEach(modal => {
 
   modal.addEventListener("show.bs.modal", function () {
 
+   
     const form = this.querySelector(".edit-form");
     const id = form.dataset.id;
+
+    const regionSelect = this.querySelector(`.region-select[data-id="${id}"]`);
+    const prefSelect   = this.querySelector(`.pref-select[data-id="${id}"]`);
+    const citySelect   = this.querySelector(`.city-select[data-id="${id}"]`);
+
+    const selectedCity = citySelect.dataset.selected;
+
+      // 🔁 RESET DROPDOWNS
+      regionSelect.innerHTML = '<option value="">Όλες οι Περιφέρειες</option>';
+      prefSelect.innerHTML   = '<option value="">Όλοι οι Νομοί</option>';
+
+      // 🔹 Load regions
+      regions.forEach(region => {
+        const opt = document.createElement("option");
+        opt.value = region;
+        opt.textContent = region;
+        regionSelect.appendChild(opt);
+      });
+
+      // 🔍 Find selected city
+      const match = greekMunicipalities.find(m => m.city === selectedCity);
+
+      if(match){
+
+        // set region
+        regionSelect.value = match.region;
+
+        // populate prefectures
+        populatePrefectures(match.region, prefSelect);
+        prefSelect.value = match.prefecture;
+
+        // populate cities (correct filtering!)
+        populateCities(match.region, match.prefecture, citySelect);
+
+        // set city
+        citySelect.value = selectedCity;
+
+      } else {
+
+        // fallback
+        loadAllCitiesEdit(citySelect);
+        citySelect.value = selectedCity;
+      }
 
     // find original data (from EJS)
     const item = {

@@ -151,7 +151,7 @@ ${item}
 
 function loadAllCities(select){
 
-  select.innerHTML = '<option value="">Επιλέξτε Πόλη</option>';
+  select.innerHTML = '<option value="">🔄 Όλες οι Πόλεις</option>';
 
   greekMunicipalities.forEach(m => {
     const opt = document.createElement("option");
@@ -195,7 +195,7 @@ name="services[${index}][Prosthetes]" required>
 
 <select id="region-${index}" class="form-select mb-2" name="services[${index}][Perifereia]" required>
 
-<option value="">Όλες</option>
+<option value="">Όλες οι Περιφέρειες</option>
 
 
 </select>
@@ -206,7 +206,7 @@ name="services[${index}][Prosthetes]" required>
 name="services[${index}][Nomos]" required
 >
 
-<option value="">Όλοι</option>
+<option value="">Όλοι οι Νομοί</option>
 
 </select>
 
@@ -217,7 +217,7 @@ name="services[${index}][Nomos]" required
 id="city-${index}"
 name="services[${index}][Poli]" required>
 
-<option value="">Επιλέξτε Πόλη</option>
+<option value="">🔄 Όλες οι Πόλεις</option>
 
 </select>
 
@@ -344,7 +344,7 @@ loadAllCities(citySelect);
 
 function loadAllCities(select){
 
-  select.innerHTML = '<option value="">Επιλέξτε Πόλη</option>';
+  select.innerHTML = '<option value="">🔄 Όλες οι Πόλεις</option>';
 
   greekMunicipalities.forEach(m => {
 
@@ -379,7 +379,7 @@ regionSelect.appendChild(opt);
 /* REGION FILTER */
 regionSelect.addEventListener("change",function(){
 
-prefSelect.innerHTML='<option value="">Όλοι</option>';
+prefSelect.innerHTML='<option value="">Όλοι οι Νομοί</option>';
 
 const region=this.value;
 
@@ -401,7 +401,7 @@ if(!region){
 }else{
   const filtered = greekMunicipalities.filter(m => m.region === region);
 
-  citySelect.innerHTML = '<option value="">Επιλέξτε Πόλη</option>';
+  citySelect.innerHTML = '<option value="">🔄 Όλες οι Πόλεις</option>';
 
   filtered.forEach(c=>{
     const opt=document.createElement("option");
@@ -415,55 +415,110 @@ if(!region){
 
 /* PREF FILTER */
 
+prefSelect.addEventListener("change", function(){
 
-prefSelect.addEventListener("change",function(){
+  const pref = this.value;
 
-const region = regionSelect.value;
-const pref = this.value;
+  citySelect.innerHTML = '<option value="">🔄 Όλες οι Πόλεις</option>';
 
-citySelect.innerHTML = '<option value="">Επιλέξτε Πόλη</option>';
+  // 🔥 ONLY filter by prefecture (Nomos)
+  const filtered = greekMunicipalities.filter(m =>
+    !pref || m.prefecture === pref
+  );
 
-const filtered = greekMunicipalities.filter(m =>
-  (!region || m.region === region) &&
-  (!pref || m.prefecture === pref)
-);
-
-filtered.forEach(c=>{
-  const opt=document.createElement("option");
-  opt.value=c.city;
-  opt.textContent=c.city;
-  citySelect.appendChild(opt);
-});
+  filtered.forEach(c=>{
+    const opt = document.createElement("option");
+    opt.value = c.city;
+    opt.textContent = c.city;
+    citySelect.appendChild(opt);
+  });
 
 });
 
 /* CITY → MAP */
 
-citySelect.addEventListener("change",async function(){
+/* CITY → AUTO-FILL + RESET + MAP */
 
-const city=this.value;
+citySelect.addEventListener("change", async function(){
 
-if(!city) return;
+  const city = this.value;
 
-const res=await fetch(
-`https://nominatim.openstreetmap.org/search?format=json&countrycodes=gr&q=${city}`
-);
+  /* 🔄 RESET */
+  if (!city) {
 
-const data=await res.json();
+    regionSelect.value = "";
+    prefSelect.innerHTML = '<option value="">Όλοι οι Νομοί</option>';
 
-if(data.length){
+    loadAllCities(citySelect);
 
-const lat=data[0].lat;
+    return;
+  }
 
-const lon=data[0].lon;
+  /* 🔍 FIND CITY */
+  const match = greekMunicipalities.find(m => m.city === city);
 
-map.setView([lat,lon],11);
+  if (match) {
 
-if(marker) map.removeLayer(marker);
+    // ✅ SET REGION (without triggering wrong filtering)
+    regionSelect.value = match.region;
 
-marker=L.marker([lat,lon]).addTo(map);
+    // ✅ LOAD prefectures for that region
+    prefSelect.innerHTML = '<option value="">Όλοι οι Νομοί</option>';
 
-}
+    const prefs = [...new Set(
+      greekMunicipalities
+        .filter(m => m.region === match.region)
+        .map(m => m.prefecture)
+    )];
+
+    prefs.forEach(p => {
+      const opt = document.createElement("option");
+      opt.value = p;
+      opt.textContent = p;
+      prefSelect.appendChild(opt);
+    });
+
+    // ✅ SET PREFECTURE
+    prefSelect.value = match.prefecture;
+
+    // 🔥 CRITICAL FIX:
+    // 👉 FILTER by BOTH region AND prefecture
+    citySelect.innerHTML = '<option value="">🔄 Όλες οι Πόλεις</option>';
+
+    const filtered = greekMunicipalities.filter(m =>
+      m.region === match.region &&
+      m.prefecture === match.prefecture
+    );
+
+    filtered.forEach(c => {
+      const opt = document.createElement("option");
+      opt.value = c.city;
+      opt.textContent = c.city;
+      citySelect.appendChild(opt);
+    });
+
+    // ✅ RESELECT CITY
+    citySelect.value = city;
+  }
+
+  /* 🗺 MAP (unchanged) */
+  const res = await fetch(
+    `https://nominatim.openstreetmap.org/search?format=json&countrycodes=gr&q=${city}`
+  );
+
+  const data = await res.json();
+
+  if(data.length){
+
+    const lat = data[0].lat;
+    const lon = data[0].lon;
+
+    map.setView([lat,lon],11);
+
+    if(marker) map.removeLayer(marker);
+
+    marker = L.marker([lat,lon]).addTo(map);
+  }
 
 });
 

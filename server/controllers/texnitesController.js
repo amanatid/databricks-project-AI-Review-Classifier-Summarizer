@@ -7,6 +7,8 @@ import { getAllTexnites,
          updatemycard, deletecard,
          profilemodeldeleteaccount,
          copydatalink,
+         copydatalinkcity,
+         searchTexnitesCity,
         } from "../models/texnitesModel.js";
 import { sendContactEmail } from "../services/emailService.js";
 import { professionMap, optionsMap} from "../public/data/professionMap.js";
@@ -72,24 +74,18 @@ export const submitSearch = async (req, res, next) => {
     ///const { speciality, city } = req.body;
     const { speciality, region, prefecture, city } = req.body;
     console.log(req.body)  ;
-    let query = {};
+   
 
-    if (speciality) query.Eidikotita = speciality;
-    if (region) query.Perifereia = region;
-    if (prefecture) query.Nomos = prefecture;
-    if (city) query.Poli = city;
-
-    console.log(query);
-   // let price = req.body.price || 1000000; // default high value
-    let price = req.body.price ?? 1000000; 
-    // Validation
-    if (!speciality || !city || !region || !prefecture ) {
-      return res.status(400).json({
-        message: "Παρακαλώ συμπληρώστε όλα τα πεδία."
-      });
-    }
-
-    const data = await searchTexnites(speciality,  region, prefecture, city, price);
+    
+    
+    let data;
+    if(speciality && region &&  prefecture  && city  ){
+         data = await searchTexnites(speciality,  region, prefecture, city);
+     } 
+    
+     if(speciality &&  city  ){
+          data=await searchTexnitesCity(speciality, city);
+     } 
 
     if (!data || data.length === 0) {
       return res.status(404).json({
@@ -115,9 +111,11 @@ export  const copylink = async (req, res ) =>{
   console.log('request query')
   console.log(req.query);
 
+  let  data;
+  //data =  await copydatalink(speciality, region, prefecture, city);
+  data =  await copydatalinkcity(speciality, city);
 
-   const data =  await copydatalink(speciality, region, prefecture, city);
-
+  console.log(data);
   if (!data || data.length === 0) {
     return res.status(404).json({ message: 'No matching records found.' });
   }
