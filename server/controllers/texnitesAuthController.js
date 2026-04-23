@@ -97,7 +97,7 @@ export const loginUser = async (req, res) => {
    
     username = username.trim();
     username = username.replace(/\s+/g, "");
-    console.log(username, password)
+   
     //find if the current user is exists in database or not
     const user = await findUserByUsername(username);
       //  console.log(user);
@@ -309,7 +309,7 @@ export const resetnewpassowrdnulltoken = async (req, res) => {
       message: "Σφάλμα server"
     });
   }
-}
+};
 
 
 

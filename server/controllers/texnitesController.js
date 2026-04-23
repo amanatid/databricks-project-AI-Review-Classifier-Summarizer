@@ -6,14 +6,13 @@ import { getAllTexnites,
          getMyTechnicianDataWithAccount,
          updatemycard, deletecard,
          profilemodeldeleteaccount,
-         copydatalink,
+         
          copydatalinkcity,
          searchTexnitesCity,
         } from "../models/texnitesModel.js";
 import { sendContactEmail } from "../services/emailService.js";
 import { professionMap, optionsMap} from "../public/data/professionMap.js";
 import bcrypt from "bcryptjs"; 
-import { greekMunicipalitiesExport } from '../public/data/greekMunicipalities.js';
 import { greekMunicipalities } from "../public/data/greekMunicipalities.js";
 
 
@@ -21,11 +20,7 @@ export const getHomePage = async (req, res, next) => {
   try {
     const data = await getAllTexnites();
 
-  //  const uniquePoli = [...new Set(data.map(item => item.Poli))];
   
-      const uniquePoli = [
-        ...new Set(greekMunicipalitiesExport.map(m => m.city))
-      ].sort();
     //----------pagination----------------------//
     //http://localhost:3000/?page=2
    /* const page = parseInt(req.query.page) || 1;
@@ -57,7 +52,6 @@ export const getHomePage = async (req, res, next) => {
 
     res.render("index.ejs", {
       data,
-     // uniquePoli,
       optionsMap:optionsMap,
       greekMunicipalities:greekMunicipalities,
     });
@@ -108,19 +102,18 @@ export const submitSearch = async (req, res, next) => {
 export  const copylink = async (req, res ) =>{
 
   const { speciality, region, prefecture, city } = req.query;
-  console.log('request query')
-  console.log(req.query);
+  
 
   let  data;
   //data =  await copydatalink(speciality, region, prefecture, city);
   data =  await copydatalinkcity(speciality, city);
 
-  console.log(data);
+
   if (!data || data.length === 0) {
     return res.status(404).json({ message: 'No matching records found.' });
   }
 
-  console.log(data)
+  
 
   res.render('search.ejs', {
     results: data,
@@ -130,7 +123,7 @@ export  const copylink = async (req, res ) =>{
     city: city,
   });
 
-}
+};
 
 
 export const submitContact = async (req, res) => {
@@ -165,18 +158,15 @@ export const submitContact = async (req, res) => {
 
 export const submitTechnician = async (req, res, next) => {
   try {
-    const { username, userId } = req.userInfo;
+   // const { username, userId } = req.userInfo;
     const created_at = new Date(); 
     const { Onoma, Epitheto, Eidikotites,Epimerous,services } = req.body;
 
 
-   console.log("reqbody=", req.userInfo)
-   console.log("reqbody=", req.body)
-  //console.dir(req.body, { depth: null });
     
     const user_id = req.userInfo.userId; // from JWT middleware
     const Eidikotita = professionMap[Eidikotites];
-    console.log(user_id, userId)
+    
     //console.log(Eidikotita)
     // Normalize Epimerous to always be array
    const normalizedServices = services.map(service => ({
@@ -241,15 +231,11 @@ export const submitTechnician = async (req, res, next) => {
 
 export const submitTechnician1 = async (req, res, next) => {
   try {
-    console.log("Post Technician without Account");
-     console.log("reqbody=", req.body)
+ 
     const created_at = new Date(); 
     const { Onoma, Epitheto, Eidikotites,Epimerous,services } = req.body;
  
 
-    console.log("reqbody=", req.body)
-  //console.dir(req.body, { depth: null });
-    
     
     const Eidikotita = professionMap[Eidikotites];
     //console.log(Eidikotita)

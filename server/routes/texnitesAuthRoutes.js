@@ -22,7 +22,7 @@ router.post("/login",loginUser);
 router.get("/logout", logoutUser);
 
 router.get("/forgot-password", forgotpassword);
-router.post("/forgotpassword", forgetpasswordtoken )
+router.post("/forgotpassword", forgetpasswordtoken );
 router.get("/resetpassword/:token", resetpasswordtoken);
 router.post("/resetpassword/:token",  resetnewpassowrdnulltoken );
 //////////////////////////////////////////////////////////////

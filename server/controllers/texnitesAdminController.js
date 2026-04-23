@@ -34,10 +34,9 @@ export const admineditmycard =  async  (req, res, next) => {
      try {
  
      const id = req.params.id;
-     //console.log("I edited the card")
-    // console.log(req.body)
+    
      // user comes from authMiddleware
-      const {  userId } = req.userInfo;
+      //  const {  userId } = req.userInfo;
       let newuserid = null; 
      
       const {idtexnitesusers, username, password} = req.body;

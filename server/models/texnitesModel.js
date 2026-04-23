@@ -61,7 +61,7 @@ export const copydatalink  = async  (speciality,  region, prefecture, city) => {
 
   return data;
   
-}
+};
 
 
 export const copydatalinkcity  = async  (speciality, city) => {
@@ -78,7 +78,7 @@ export const copydatalinkcity  = async  (speciality, city) => {
 
   return data;
   
-}
+};
 
 export const createTechnician = async (technicianData) => {
   const { data, error } = await supabase
@@ -460,14 +460,14 @@ reset_expires:expires
 })
 .eq("id", id);
 
-}
+};
 
 
 
 
 export const tokenfinduserbytoken = async(token) =>{
  
-  console.log('inside tokenfinduserbytoken')
+  //console.log('inside tokenfinduserbytoken');
  const { data: user, error } = await supabase
       .from("texnitesUsers")
       .select("*")
