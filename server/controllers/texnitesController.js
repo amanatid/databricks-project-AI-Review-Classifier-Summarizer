@@ -6,7 +6,7 @@ import { getAllTexnites,
          getMyTechnicianDataWithAccount,
          updatemycard, deletecard,
          profilemodeldeleteaccount,
-         
+         pagination,
          copydatalinkcity,
          searchTexnitesCity,
         } from "../models/texnitesModel.js";
@@ -22,20 +22,24 @@ export const getHomePage = async (req, res, next) => {
 
   
     //----------pagination----------------------//
-    //http://localhost:3000/?page=2
+    //http://localhost:51134/?page=1
+    //http://localhost:51134/?page=1&limit=5&sortBy=Onoma&sortOrder=asc
    /* const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
-    console.log('before pagination');
-    const { datapaginated, count } = await pagination({
-      table: "texnitestest",
-      page,
-      limit,
-      sortBy: req.query.sortBy,
-      sortOrder: req.query.sortOrder
-    });
-    
-    const totalPages = Math.ceil(count / limit);
 
+    // Calculate range for Supabase (.range is inclusive)
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+    const sortOrder = req.query.sortOrder === 'desc' ? false : true; // Supabase uses ascending boolean
+    const  sortBy = req.query.sortBy ||  'created_at';
+    console.log(sortBy);
+    
+    const { datapaginated,count}  =  await pagination(from,to,sortOrder,sortBy);
+    const totalPages = Math.ceil(count / limit)
+   
+    
+   
+   
     res.status(200).json({
       success: true,
       datapaginated,
@@ -43,7 +47,7 @@ export const getHomePage = async (req, res, next) => {
         page,
         limit,
         totalCards: count,
-        totalPages
+        totalPages:totalPages
       }
     }); */
 
@@ -535,3 +539,10 @@ export const profiledeleteaccount = async (req,res)=>{
 
 };    
 
+////----------------Evaluation--------------------------------------///
+
+
+export const evaluation = async (req, res) => {
+    res.render("evaluation.ejs"); 
+};
+//-------------------------End of Evaluation-----------------------------///

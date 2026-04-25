@@ -4,8 +4,9 @@ import dotenv from "dotenv";
 import texnitesRoutes from "./routes/texnitesRoutes.js";
 import { errorHandler } from "./middleware/errorMiddleware.js";
 import texnitesAuthRoutes  from "./routes/texnitesAuthRoutes.js";
+///////////////////////////////////////////////////////////////////
 import texnitesImageRoutes from "./routes/texnitesImageRoutes.js";
-
+///////////////////////////////////////////////////////////////////
 //import texnitesAdminRoute from "./routes/texnitesAdminRoute.js"
 import cookieParser from "cookie-parser";
 import { storetoken } from "./middleware/cookietoken.js";
@@ -76,8 +77,9 @@ app.use(methodOverride("_method"));
 // Routes
 app.use("/", texnitesRoutes);
 app.use("/", texnitesAuthRoutes);
+/////////////////////////////////////
 app.use("/", texnitesImageRoutes);
-
+/////////////////////////////////////
 
 //Expose  metrics endpoint for prometheus
 app.get("/metrics", async(req,res)=>{

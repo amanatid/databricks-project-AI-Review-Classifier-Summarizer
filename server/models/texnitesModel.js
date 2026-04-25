@@ -1,9 +1,10 @@
 //import { resetpassword } from "../controllers/texnitesAuthController.js";
 import supabase from "../database/db.js";
+const tablename= "texnitestest";
 
 export const getAllTexnites = async () => {
   const { data, error } = await supabase
-    .from("texnitestest")
+    .from(tablename)
     .select("*");
 
   if (error) throw error;
@@ -14,7 +15,7 @@ export const getAllTexnites = async () => {
 export const searchTexnites = async (speciality,  region, prefecture, city) => {
  
   let query =await supabase
-    .from("texnitestest")
+    .from(tablename)
     .select("*")
     .eq("Eidikotites", speciality)
     .eq("Perifereia", region)
@@ -31,7 +32,7 @@ export const searchTexnites = async (speciality,  region, prefecture, city) => {
 export const searchTexnitesCity = async (speciality,  city ) => {
  
   let query =await supabase
-    .from("texnitestest")
+    .from(tablename)
     .select("*")
     .eq("Eidikotites", speciality)
     .eq("Poli", city);
@@ -82,7 +83,7 @@ export const copydatalinkcity  = async  (speciality, city) => {
 
 export const createTechnician = async (technicianData) => {
   const { data, error } = await supabase
-    .from("texnitestest")
+    .from(tablename)
     .insert([technicianData]);
 
   if (error) throw error;
@@ -94,7 +95,7 @@ export const createTechnician = async (technicianData) => {
 export const TechnicianWithAccount = async (rows) =>{
    
    const {  error } = await supabase
-      .from("texnitestest")
+      .from(tablename)
       .insert(rows);
 
     if (error) {
@@ -167,7 +168,7 @@ export const findUserByUsername = async (username) => {
 
 export const createTechnicianWithAccount = async (technicianData) => {
   const { data, error } = await supabase
-    .from("texnitestest")
+    .from(tablename)
     .insert([technicianData]);
 console.log(error);
   if (error) throw error;
@@ -179,7 +180,7 @@ console.log(error);
 export const getMyTechnicianDataWithAccount = async (userId) => {
      
     const { data, error } = await supabase
-      .from("texnitestest")
+      .from(tablename)
       .select("*")
       .eq("user_id", userId);
 
@@ -195,7 +196,7 @@ export const getMyTechnicianDataWithAccount = async (userId) => {
 export const updateMyTechnicianSpecificDataWithAccount = async (userId, id,updatedFields) => {
 
     const { error: updateError } = await supabase
-      .from("texnitestest")
+      .from(tablename)
       .update(updatedFields)
       .eq("id", id)
       .eq("user_id", userId);
@@ -209,7 +210,7 @@ export const getMyTechnicianSpecificDataWithAccount =async (userId, id) => {
 
 
     const { data ,  error} = await supabase
-      .from("texnitestest")
+      .from(tablename)
       .select("*")
       .eq("id", id)
       .eq("user_id", userId);
@@ -226,7 +227,7 @@ export const getMyTechnicianSpecificDataWithAccount =async (userId, id) => {
 export const updatemycard = async (userId, id,updatedFields) => {
 
     const { error: updateError } = await supabase
-      .from("texnitestest")
+      .from(tablename)
       .update(updatedFields)
       .eq("id", id)
       .eq("user_id", userId);
@@ -240,7 +241,7 @@ export const updatemycard = async (userId, id,updatedFields) => {
 export  const   deletecard = async (userId,id) => {
   
    const { error } = await supabase
-    .from("texnitestest")
+    .from(tablename)
     .delete()
     .eq("id", id)
     .eq("user_id", userId);
@@ -286,7 +287,7 @@ export const profilemodeldeleteaccount = async(userId) =>{
     .eq("id",userId);
 
      const {error:error1 }=  await supabase
-    .from("texnitestest")
+    .from(tablename)
     .delete()
     .eq("user_id",userId);*/
 
@@ -302,7 +303,7 @@ export const admingetallTechnicians = async (req, res) =>{
 
   try {
     const { data, error } = await supabase
-      .from("texnitestest")
+      .from(tablename)
       .select(`
         *,
         texnitesUsers (
@@ -351,7 +352,7 @@ export const admingetallUsers = async (req, res) =>{
 export const adminupdatemycard =  async (id,updatedFields) => {
 
     const { error: updateError } = await supabase
-      .from("texnitestest")
+      .from(tablename)
       .update(updatedFields)
       .eq("id", id);
    
@@ -427,7 +428,7 @@ export const adminCreateUser = async (username, password) => {
 export const admindeletecard = async(id) =>{
    
    const {error }= await supabase
-  .from("texnitestest")
+  .from(tablename)
   .delete()
   .eq("id", id);
  
@@ -493,5 +494,26 @@ export const tokenpasswordtokenupdate = async(hashedPassword,id) =>{
       .eq("id", id);
 
 };
+
+export  const  pagination = async(from,to, sortOrder,sortBy)=>{
+     console.log('querydata')
+     console.log(from,to,sortOrder,sortBy);
+  // Execute Query
+    const { data: datapaginated,count:count, error } = await supabase
+      .from(tablename)
+      .select("*", { count: 'exact' }) // 'exact' is needed to get the total count for totalPages
+      .order(sortBy, { ascending: sortOrder })
+      .range(from, to);
+
+  
+      if (error) throw error;
+      console.log(error);
+      console.log(count);
+
+      return {datapaginated, count};
+
+
+
+}
 
 

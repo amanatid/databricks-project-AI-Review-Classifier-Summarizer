@@ -18,9 +18,7 @@ import {
     profiledeleteaccount,
     submitTechnician1,
     copylink,
-   /* adminPage,
-    admineditmycard,
-    admindeletemycard,*/
+    evaluation,
  } from "../controllers/texnitesController.js";
 import { authMiddleware } from "../middleware/texnitesAuthMiddleware.js";
 import { isAdminUser } from "../middleware/texnitesAdminMiddleware.js";
@@ -70,6 +68,8 @@ router.get("/terms",showterms);
 router.get("/epikoinwnia",contactpage);
 
 router.get('/search', copylink );
+
+router.get("/evaluation",evaluation);
 
 
 
