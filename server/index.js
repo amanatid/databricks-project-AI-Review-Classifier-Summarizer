@@ -34,7 +34,7 @@ const app = express();
 const port = process.env.PORT || 61000;
 
 //-------Prometheus Setup---------------------//
-const register = new promClient.Registry();
+/*const register = new promClient.Registry();
 promClient.collectDefaultMetrics(register);
 
 const httpRequestsCounter =   new promClient.Counter({
@@ -57,6 +57,12 @@ app.use((req, res, next) => {
   next();
 });
 
+
+//Expose  metrics endpoint for prometheus
+app.get("/metrics", async(req,res)=>{
+    res.set("Content-Type", register.contentType);
+    res.end( await register.metrics());
+});*/
 ///////////////////////////////////////////////
 
 
@@ -81,11 +87,7 @@ app.use("/", texnitesAuthRoutes);
 app.use("/", texnitesImageRoutes);
 /////////////////////////////////////
 
-//Expose  metrics endpoint for prometheus
-app.get("/metrics", async(req,res)=>{
-    res.set("Content-Type", register.contentType);
-    res.end( await register.metrics());
-});
+
 
 // Error middleware (must be last)
 app.use(errorHandler);

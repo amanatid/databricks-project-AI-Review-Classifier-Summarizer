@@ -190,17 +190,19 @@
   const citySelect = document.getElementById("city");
 
   // Unique Regions
-  const regions = [...new Set(municipalities.map(m => m.region))];
+  const regions = [...new Set(municipalities.map(m => m.region))]
+  .sort((a, b) => a.localeCompare(b, 'el'));
 
     // Populate ALL cities initially
-  const allCities = [...new Set(municipalities.map(m => m.city))];
+ const allCities = [...new Set(municipalities.map(m => m.city))]
+  .sort((a, b) => a.localeCompare(b, 'el'));
 
-  allCities.forEach(c => {
-    const option = document.createElement("option");
-    option.value = c;
-    option.textContent = c;
-    citySelect.appendChild(option);
-  });
+allCities.forEach(c => {
+  const option = document.createElement("option");
+  option.value = c;
+  option.textContent = c;
+  citySelect.appendChild(option);
+});
 
   regions.forEach(r => {
     const option = document.createElement("option");
@@ -222,8 +224,11 @@
     filtered = municipalities.filter(m => m.region === selectedRegion);
   }
 
-  const prefectures = [...new Set(filtered.map(m => m.prefecture))];
-  const cities = [...new Set(filtered.map(m => m.city))];
+  const prefectures = [...new Set(filtered.map(m => m.prefecture))]
+  .sort((a, b) => a.localeCompare(b, 'el'));
+
+  const cities = [...new Set(filtered.map(m => m.city))]
+  .sort((a, b) => a.localeCompare(b, 'el'));
 
   prefectures.forEach(p => {
     const option = document.createElement("option");
@@ -252,7 +257,8 @@ prefectureSelect.addEventListener("change", () => {
     filtered = municipalities.filter(m => m.prefecture === selectedPrefecture);
   }
 
-  const cities = [...new Set(filtered.map(m => m.city))];
+ const cities = [...new Set(filtered.map(m => m.city))]
+  .sort((a, b) => a.localeCompare(b, 'el'));
 
   cities.forEach(c => {
     const option = document.createElement("option");
@@ -441,7 +447,8 @@ citySelect.addEventListener("change", () => {
     // Reload ALL cities
     citySelect.innerHTML = '<option value="">🔄 Όλες οι Πόλεις</option>';
 
-    const allCities = [...new Set(municipalities.map(m => m.city))];
+    const allCities = [...new Set(municipalities.map(m => m.city))]
+      .sort((a, b) => a.localeCompare(b, 'el'));
 
     allCities.forEach(c => {
       const option = document.createElement("option");

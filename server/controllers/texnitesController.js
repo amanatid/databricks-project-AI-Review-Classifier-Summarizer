@@ -545,4 +545,79 @@ export const profiledeleteaccount = async (req,res)=>{
 export const evaluation = async (req, res) => {
     res.render("evaluation.ejs"); 
 };
+
+
+/* export const submitReview = async (req, res) => {
+  try {
+    const { userId } = req.userInfo;
+    const technicianId = req.params.id;
+
+    const {
+      reliability,
+      consistency,
+      quality,
+      response,
+      price,
+      completed,
+      days,
+      comment
+    } = req.body;
+
+    //---------------- VALIDATION ---------------- //
+
+    const values = [reliability, consistency, quality, response, price];
+
+    if (values.some(v => v < 1 || v > 5)) {
+      return res.status(400).json({ message: "Invalid rating values" });
+    }
+
+    // ---------------- CHECK UNIQUE ---------------- //
+
+    const { data: existing } = await supabase
+      .from("reviews")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("technician_id", technicianId)
+      .single();
+
+    if (existing) {
+      return res.status(400).json({
+        message: "Έχετε ήδη αξιολογήσει αυτόν τον τεχνίτη"
+      });
+    }
+
+    // ---------------- SOFT VERIFICATION ---------------- //
+
+    const verified = false; // 🔥 για τώρα
+
+    // ---------------- INSERT ---------------- //
+
+    const { error } = await supabase
+      .from("reviews")
+      .insert({
+        user_id: userId,
+        technician_id: technicianId,
+
+        reliability,
+        consistency,
+        quality,
+        response,
+        price,
+
+        completed: completed === "true",
+        days: parseInt(days) || null,
+        comment,
+
+        verified
+      });
+
+    if (error) throw error;
+
+    res.redirect(`/technician/${technicianId}`);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+}; */
 //-------------------------End of Evaluation-----------------------------///

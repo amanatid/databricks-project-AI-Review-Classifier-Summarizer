@@ -1,6 +1,6 @@
 //import { resetpassword } from "../controllers/texnitesAuthController.js";
 import supabase from "../database/db.js";
-const tablename= "texnitestest";
+const tablename= "texnitestest1";
 
 export const getAllTexnites = async () => {
   const { data, error } = await supabase
@@ -8,7 +8,7 @@ export const getAllTexnites = async () => {
     .select("*");
 
   if (error) throw error;
-
+ 
   return data;
 };
 
@@ -35,8 +35,9 @@ export const searchTexnitesCity = async (speciality,  city ) => {
     .from(tablename)
     .select("*")
     .eq("Eidikotites", speciality)
-    .eq("Poli", city);
-
+    .eq("Poli", city).order("id", { ascending: true });;
+    
+  //console.log(query);
   const { data, error } = await query;
  
   if (error) throw error;

@@ -424,12 +424,12 @@ function populateCities(region, pref, citySelect){
 
 citySelect.innerHTML = '<option value="">🔄 Όλες οι Πόλεις</option>';
 
-const cities = greekMunicipalities.filter(m =>
-
-(!region || m.region === region) &&
-(!pref || m.prefecture === pref)
-
-);
+const cities = greekMunicipalities
+  .filter(m =>
+    (!region || m.region === region) &&
+    (!pref || m.prefecture === pref)
+  )
+  .sort((a, b) => a.city.localeCompare(b.city, 'el')); // 🔥 SORT HERE
 
 cities.forEach(city => {
 
@@ -448,7 +448,10 @@ function loadAllCitiesEdit(select){
 
   select.innerHTML = '<option value="">🔄 Όλες οι Πόλεις</option>';
 
-  greekMunicipalities.forEach(m => {
+  const sorted = [...greekMunicipalities]
+    .sort((a, b) => a.city.localeCompare(b.city, 'el')); // 🔥 SORT
+
+  sorted.forEach(m => {
     const opt = document.createElement("option");
     opt.value = m.city;
     opt.textContent = m.city;

@@ -149,17 +149,10 @@ ${item}
 
 }
 
-function loadAllCities(select){
 
-  select.innerHTML = '<option value="">🔄 Όλες οι Πόλεις</option>';
 
-  greekMunicipalities.forEach(m => {
-    const opt = document.createElement("option");
-    opt.value = m.city;
-    opt.textContent = m.city;
-    select.appendChild(opt);
-  });
-
+function sortGreek(arr) {
+  return arr.sort((a, b) => a.localeCompare(b, 'el'));
 }
 
 /* ---------------- ADD CITY CARD ---------------- */
@@ -346,15 +339,15 @@ function loadAllCities(select){
 
   select.innerHTML = '<option value="">🔄 Όλες οι Πόλεις</option>';
 
-  greekMunicipalities.forEach(m => {
+ const cities = [...new Set(greekMunicipalities.map(m => m.city))];
+const sorted = sortGreek(cities);
 
-    const opt = document.createElement("option");
-    opt.value = m.city;
-    opt.textContent = m.city;
-
-    select.appendChild(opt);
-  });
-
+sorted.forEach(city => {
+  const opt = document.createElement("option");
+  opt.value = city;
+  opt.textContent = city;
+  select.appendChild(opt);
+});
 }
 
 /* initial load */
@@ -403,12 +396,15 @@ if(!region){
 
   citySelect.innerHTML = '<option value="">🔄 Όλες οι Πόλεις</option>';
 
-  filtered.forEach(c=>{
-    const opt=document.createElement("option");
-    opt.value=c.city;
-    opt.textContent=c.city;
-    citySelect.appendChild(opt);
-  });
+  const cities = [...new Set(filtered.map(m => m.city))];
+const sorted = sortGreek(cities);
+
+sorted.forEach(city=>{
+  const opt=document.createElement("option");
+  opt.value=city;
+  opt.textContent=city;
+  citySelect.appendChild(opt);
+});
 }
 
 });
@@ -426,12 +422,15 @@ prefSelect.addEventListener("change", function(){
     !pref || m.prefecture === pref
   );
 
-  filtered.forEach(c=>{
-    const opt = document.createElement("option");
-    opt.value = c.city;
-    opt.textContent = c.city;
-    citySelect.appendChild(opt);
-  });
+  const cities = [...new Set(filtered.map(m => m.city))];
+const sorted = sortGreek(cities);
+
+sorted.forEach(city=>{
+  const opt = document.createElement("option");
+  opt.value = city;
+  opt.textContent = city;
+  citySelect.appendChild(opt);
+});
 
 });
 
@@ -490,10 +489,13 @@ citySelect.addEventListener("change", async function(){
       m.prefecture === match.prefecture
     );
 
-    filtered.forEach(c => {
+    const cities = [...new Set(filtered.map(m => m.city))];
+    const sorted = sortGreek(cities);
+
+    sorted.forEach(city => {
       const opt = document.createElement("option");
-      opt.value = c.city;
-      opt.textContent = c.city;
+      opt.value = city;
+      opt.textContent = city;
       citySelect.appendChild(opt);
     });
 
