@@ -3,17 +3,27 @@ import { getAllTexnites,
          profilemodelchangepassword, 
          profilemodelcurrentpassword,
          TechnicianWithAccount, 
+         TechnicianWithOutAccount,
          getMyTechnicianDataWithAccount,
          updatemycard, deletecard,
          profilemodeldeleteaccount,
          pagination,
          copydatalinkcity,
          searchTexnitesCity,
+         existingreview,
+         insertreview,
+         getReviewsByTechnicianId ,
+         getTechnicianById,
+         updateTechnicianScore,
+         infotechnicianById
         } from "../models/texnitesModel.js";
 import { sendContactEmail } from "../services/emailService.js";
 import { professionMap, optionsMap} from "../public/data/professionMap.js";
 import bcrypt from "bcryptjs"; 
 import { greekMunicipalities } from "../public/data/greekMunicipalities.js";
+import  { calculateScore } from  "../helpers/score.js"
+import  crypto from  'crypto';
+
 
 
 export const getHomePage = async (req, res, next) => {
@@ -70,6 +80,7 @@ export const getHomePage = async (req, res, next) => {
 export const submitSearch = async (req, res, next) => {
   try {
     ///const { speciality, city } = req.body;
+    console.log('Hit submitSearch  endpoint......');
     const { speciality, region, prefecture, city } = req.body;
     console.log(req.body)  ;
    
@@ -78,13 +89,14 @@ export const submitSearch = async (req, res, next) => {
     
     let data;
     if(speciality && region &&  prefecture  && city  ){
-         data = await searchTexnites(speciality,  region, prefecture, city);
+         data = await searchTexnites(speciality,  region, prefecture, city);    
      } 
     
      if(speciality &&  city  ){
           data=await searchTexnitesCity(speciality, city);
      } 
 
+      
     if (!data || data.length === 0) {
       return res.status(404).json({
         message: "Μη Διαθέσιμα Δεδομένα",
@@ -92,12 +104,34 @@ export const submitSearch = async (req, res, next) => {
       });
     }
 
+   
+    const  technicianid =  data[0].technician_id;
+    const { score }  = await getTechnicianById(technicianid);
+    
+     Object.assign(data[0], { score: score });
+    
+     
+  
+     let isLoggedIn = 'true';
+     
+     if(req.userInfo &&  req.userInfo.role  ===  'guest'){
+       isLoggedIn = "true";
+     }
+     else{
+        isLoggedIn = "false";
+     }
+    
+     Object.assign(data[0], { isLoggedIn:isLoggedIn });    
+     console.log(data);
     res.json({
       message: null,
-      data
+      data,
+     // isLoggedIn
     });
 
   } catch (error) {
+    console.log('error=');
+    console.log(error);
     next(error);
   }
 };
@@ -125,6 +159,7 @@ export  const copylink = async (req, res ) =>{
     region:region,
     prefecture:prefecture,
     city: city,
+   
   });
 
 };
@@ -162,7 +197,7 @@ export const submitContact = async (req, res) => {
 
 export const submitTechnician = async (req, res, next) => {
   try {
-   // const { username, userId } = req.userInfo;
+    const { technicianid } = req.userInfo;
     const created_at = new Date(); 
     const { Onoma, Epitheto, Eidikotites,Epimerous,services } = req.body;
 
@@ -190,8 +225,8 @@ export const submitTechnician = async (req, res, next) => {
     const Epimerous1 = EpimerousArray.join(', ');
 
     
-
-
+   
+    console.log(technicianid);
     // Prepare rows for insertion
     const rows = normalizedServices.map(service => ({
       created_at: created_at ,
@@ -203,7 +238,9 @@ export const submitTechnician = async (req, res, next) => {
       Nomos:service.Nomos,
       Poli: service.Poli,
       Eidikotites: Eidikotites,
-      Phone: service.Phone,
+      Phone: service.Phone.trim()                  // remove leading/trailing spaces
+             .replace(/\D/g, "")                   // remove all non-digits (spaces, dashes, etc.)
+             .replace(/^30/, ""),
       Prosthetes: service.Prosthetes,
       Diathesimotita: service.Diathesimotita,
       Timi: parseInt(service.Timi),
@@ -212,7 +249,18 @@ export const submitTechnician = async (req, res, next) => {
 
   //console.dir(rows, { depth: null });
 
-   await TechnicianWithAccount(rows);
+  // Prepare rows for insertion
+    const rowstexnitesall = normalizedServices.map(service => ({
+      created_at: created_at ,
+      Onoma,
+      Epitheto,
+      Phone: service.Phone.trim()                  // remove leading/trailing spaces
+             .replace(/\D/g, "")                   // remove all non-digits (spaces, dashes, etc.)
+             .replace(/^30/, ""),
+ 
+      }));  
+
+   await TechnicianWithAccount(rows, rowstexnitesall);
 
      
 
@@ -262,7 +310,7 @@ export const submitTechnician1 = async (req, res, next) => {
 
     
 
-
+     const technician_id =  crypto.randomUUID();
     // Prepare rows for insertion
     const rows = normalizedServices.map(service => ({
       created_at: created_at ,
@@ -274,17 +322,30 @@ export const submitTechnician1 = async (req, res, next) => {
       Nomos:service.Nomos,
       Poli: service.Poli,
       Eidikotites: Eidikotites,
-      Phone: service.Phone,
+      Phone: service.Phone.trim()                  // remove leading/trailing spaces
+             .replace(/\D/g, "")                   // remove all non-digits (spaces, dashes, etc.)
+             .replace(/^30/, ""),
       Prosthetes: service.Prosthetes,
       Diathesimotita: service.Diathesimotita,
       Timi: parseInt(service.Timi),
-      
+    
       
     }));
 
   //console.dir(rows, { depth: null });
 
-   await TechnicianWithAccount(rows);
+  // Prepare rows for insertion
+    const rowstexnitesall = normalizedServices.map(service => ({
+      created_at: created_at ,
+      Onoma,
+      Epitheto,
+      Phone: service.Phone.trim()                  // remove leading/trailing spaces
+             .replace(/\D/g, "")                   // remove all non-digits (spaces, dashes, etc.)
+             .replace(/^30/, ""),
+         
+      }));
+    
+   await TechnicianWithOutAccount(rows,rowstexnitesall);
 
      
 
@@ -539,85 +600,6 @@ export const profiledeleteaccount = async (req,res)=>{
 
 };    
 
-////----------------Evaluation--------------------------------------///
 
 
-export const evaluation = async (req, res) => {
-    res.render("evaluation.ejs"); 
-};
 
-
-/* export const submitReview = async (req, res) => {
-  try {
-    const { userId } = req.userInfo;
-    const technicianId = req.params.id;
-
-    const {
-      reliability,
-      consistency,
-      quality,
-      response,
-      price,
-      completed,
-      days,
-      comment
-    } = req.body;
-
-    //---------------- VALIDATION ---------------- //
-
-    const values = [reliability, consistency, quality, response, price];
-
-    if (values.some(v => v < 1 || v > 5)) {
-      return res.status(400).json({ message: "Invalid rating values" });
-    }
-
-    // ---------------- CHECK UNIQUE ---------------- //
-
-    const { data: existing } = await supabase
-      .from("reviews")
-      .select("id")
-      .eq("user_id", userId)
-      .eq("technician_id", technicianId)
-      .single();
-
-    if (existing) {
-      return res.status(400).json({
-        message: "Έχετε ήδη αξιολογήσει αυτόν τον τεχνίτη"
-      });
-    }
-
-    // ---------------- SOFT VERIFICATION ---------------- //
-
-    const verified = false; // 🔥 για τώρα
-
-    // ---------------- INSERT ---------------- //
-
-    const { error } = await supabase
-      .from("reviews")
-      .insert({
-        user_id: userId,
-        technician_id: technicianId,
-
-        reliability,
-        consistency,
-        quality,
-        response,
-        price,
-
-        completed: completed === "true",
-        days: parseInt(days) || null,
-        comment,
-
-        verified
-      });
-
-    if (error) throw error;
-
-    res.redirect(`/technician/${technicianId}`);
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
-  }
-}; */
-//-------------------------End of Evaluation-----------------------------///

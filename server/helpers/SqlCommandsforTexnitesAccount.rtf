@@ -1,16 +1,15 @@
-{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
-{\*\generator Riched20 10.0.19041}\viewkind4\uc1 
-\pard\sa200\sl276\slmult1\f0\fs22\lang9 ALTER TABLE "texnitestest"\par
-ADD COLUMN user_id uuid;\par
-\par
-ALTER TABLE "texnitestest"\par
-ADD CONSTRAINT texnitestest_user_id_fkey\par
-FOREIGN KEY (user_id)\par
-REFERENCES "texnitesUsers"(id)\par
-ON DELETE CASCADE;\par
-\par
-CREATE INDEX idx_texnitestest_user_id\par
-ON "texnitestest"(user_id);\par
+
+ALTER TABLE "texnitestest"
+ADD COLUMN user_id uuid;
+
+ALTER TABLE "texnitestest"
+ADD CONSTRAINT texnitestest_user_id_fkey
+FOREIGN KEY (user_id)
+REFERENCES "texnitesUsers"(id)
+ON DELETE CASCADE;
+
+CREATE INDEX idx_texnitestest_user_id
+ON "texnitestest"(user_id);
 }
 
 

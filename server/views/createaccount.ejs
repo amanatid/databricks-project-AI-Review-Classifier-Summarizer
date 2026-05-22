@@ -4,10 +4,24 @@
 <link rel="stylesheet"
  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <% if (locals.submitbutton) { %> 
+
+
 <div class="alert alert-warning alert-dismissible show" role="alert">
+  
   <%= message %>
+
+  <div class="mt-2">
+    <a href="/login"
+       class="btn btn-sm btn-primary rounded-pill">
+       <i class="bi bi-box-arrow-in-right me-1"></i>
+       Σύνδεση
+    </a>
+  </div>
+
   <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-</div> 
+</div>
+
+
 <div class="container my-5 px-2 d-flex justify-content-center align-items-center min-vh-100"></div>
 <% } %>      
 
@@ -27,20 +41,39 @@
       </h3>
       <p class="text-muted">Συμπληρώστε τα στοιχεία σας</p>
     </div>
+   
+    <!-- < % if (message && !locals.submitbutton) { % >
+      <div class="alert alert-danger alert-dismissible show" role="alert">
+        < % = message % >
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    < % } % > -->
 
     <form action="/register" method="POST" class="row g-3">
 
-      <!-- Email / Phone  Username -->
-    <div class="col-12">
-      <label for="username" class="form-label">Email ή Τηλέφωνο</label>
+          
+      <div class="col-12">
+        <label for="username" class="form-label">Email ή Τηλέφωνο (για σύνδεση)</label>
 
-      <input type="text"
-            id="username"
-            name="username"
-            class="form-control rounded-pill"
-            placeholder="example@domain.com ή 69XXXXXXXX"
-            required>
-    </div>
+        <input type="text"
+              id="username"
+              name="username"
+              class="form-control rounded-pill"
+              placeholder="example@domain.com ή 69XXXXXXXX"
+              required>
+      </div>
+
+      <!-- ✅ NEW: Phone (REQUIRED for identity) -->
+      <div class="col-12">
+        <label for="phone" class="form-label">Κινητό (υποχρεωτικό)</label>
+
+        <input type="text"
+              id="phone"
+              name="phone"
+              class="form-control rounded-pill"
+              placeholder="69XXXXXXXX"
+              required>
+      </div>
 
       <!-- Password with toggle -->
       <div class="col-12 position-relative">

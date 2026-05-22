@@ -1,212 +1,13 @@
 //import { resetpassword } from "../controllers/texnitesAuthController.js";
 import supabase from "../database/db.js";
-const tablename= "texnitestest1_duplicate";
-
-export const getAllTexnites = async () => {
-  const { data, error } = await supabase
-    .from(tablename)
-    .select("*");
-
-  if (error) throw error;
- 
-  return data;
-};
-
-export const searchTexnites = async (speciality,  region, prefecture, city) => {
- 
-
-  const { data, error } =await supabase
-    .from("texnitestest1_duplicate")
-    .select("*")
-    .eq("Eidikotites", speciality)
-    .eq("Perifereia", region)
-    .eq("Nomos", prefecture)
-    .eq("Poli", city);
-  
- 
-
-  if (error) throw error;
-  return data;
-
-};
-
-export const searchTexnitesCity = async (speciality,  city ) => {
- 
-  let query =await supabase
-    .from(tablename)
-    .select("*")
-    .eq("Eidikotites", speciality)
-    .eq("Poli", city).order("id", { ascending: true });;
-    
-  //console.log(query);
-  const { data, error } = await query;
- 
-  if (error) throw error;
-
-  return data;
-};
+const tablename= "texnitesGuests";
 
 
 
-export const copydatalink  = async  (speciality,  region, prefecture, city) => {
-
-  
-  const { data, error } = await supabase
-    .from('texnitestest')
-    .select('*')
-    .eq('Eidikotites', speciality)
-    .eq('Perifereia', region)
-    .eq('Nomos', prefecture)
-    .eq('Poli', city);
-
-    
-  if (error) throw error;
-
-  return data;
-  
-};
-
-
-export const copydatalinkcity  = async  (speciality, city) => {
-
-  
-  const { data, error } = await supabase
-    .from('texnitestest')
-    .select('*')
-    .eq('Eidikotites', speciality)
-    .eq('Poli', city);
-
-    
-  if (error) throw error;
-
-  return data;
-  
-};
-
-export const createTechnician = async (technicianData) => {
-  const { data, error } = await supabase
-    .from(tablename)
-    .insert([technicianData]);
-
-  if (error) throw error;
-
-  return data;
-};
-
-export const TechnicianWithAccount = async (rows, rowstexnitesall) => {
-
-  // 1. Insert into parent table and RETURN inserted rows
-  const { data, error: error1 } = await supabase
-    .from("texnitesall")
-    .insert(rowstexnitesall)
-    .select();
-
-  if (error1) {
-    console.error("Error inserting into texnitesall:", error1);
-    throw error1;
-  }
-
-  // Get the generated parent id
-  const parentId = data[0].id;
-
-  // 2. Add parentId to every child row
-  const rowsWithFK = rows.map(row => ({
-    ...row,
-    technician_id: parentId
-  }));
-
-  // 3. Insert child rows
-  const { error: error2 } = await supabase
-    .from("texnitestest1_duplicate")
-    .insert(rowsWithFK);
-
-  if (error2) {
-    console.error("Error inserting into duplicate table:", error2);
-    throw error2;
-  }
-
-};
-
-export const TechnicianWithOutAccount = async (rows, rowstexnitesall) => {
- 
-
-  // 1. Insert into parent table and RETURN inserted rows
-  const { data, error: error1 } = await supabase
-    .from("texnitesall")
-    .insert(rowstexnitesall)
-    .select();
-
-  if (error1) {
-    console.error("Error inserting into texnitesall:", error1);
-    throw error1;
-  }
-
-  // Get the generated parent id
-  const parentId = data[0].id;
-
-  // 2. Add parentId to every child row
-  const rowsWithFK = rows.map(row => ({
-    ...row,
-    technician_id: parentId
-  }));
-
-  // 3. Insert child rows
-  const { error: error2 } = await supabase
-    .from("texnitestest1_duplicate")
-    .insert(rowsWithFK);
-
-  if (error2) {
-    console.error("Error inserting into duplicate table:", error2);
-    throw error2;
-  }
-
-};
-
-export const createAccountTechnician = async (username, hashedPassword,phone) =>{
-  
-
-  const { data, error } = await supabase
-      .from("texnitesUsers")
-      .insert([
-        {
-          username: username,
-          password: hashedPassword,
-          role:"user",
-          phone:phone
-        },
-      ])
-      .select();
-
-     if (error) {
-      throw error;
-    } 
-
-    // ✅ get the generated user id
-    const userId = data[0].id;
-
-   const { error: error2 } = await supabase
-      .from("texnitesall")
-      .insert([
-        {
-          user_id: userId,   // ✅ foreign key
-          Onoma: username,
-          Phone: phone
-        }
-      ]);
-
-    if (error2) throw error2;
-
-  return data ;
-
- 
-};
-
-
-
-export const checkExistingTechnician = async (username) =>{
+export const checkExistingGuest = async (username) =>{
 
   const { data: existingUser, error: checkError } = await supabase
-      .from("texnitesUsers")
+      .from(tablename)
       .select("id") // only select what you need
       .eq("username", username)
       .maybeSingle(); // returns null if not found
@@ -221,7 +22,7 @@ export const checkExistingTechnician = async (username) =>{
 
 export const findUserByUsername = async (username) => {
   const { data, error } = await supabase
-    .from("texnitesUsers")
+    .from(tablename)
     .select("*")
     .eq("username", username)
     .maybeSingle(); // returns null if not found
@@ -241,14 +42,63 @@ export const findUserByUsername = async (username) => {
 
 
 
-export const createTechnicianWithAccount = async (technicianData) => {
-  const { data, error } = await supabase
-    .from(tablename)
-    .insert([technicianData]);
-console.log(error);
-  if (error) throw error;
-  
-  return data;
+export const createAccountGuest = async (username, hashedPassword, Onoma, Epitheto, Phone, Poli) => {
+  try {
+   
+   
+
+    // Insert into texnitesUsers
+    const {  data: userData, error: userError } = await supabase
+      .from("texnitesUsers")
+      .insert([
+        {
+          username: username,
+          password: hashedPassword,
+          role: "guest"
+        },
+      ])
+      .select();
+
+    // If the second insert fails, return false
+    if (userError) {
+      console.error("Error inserting into texnitesUsers:", userError.message);
+      return false;
+    }
+     
+    const userId = userData[0].id;
+     // Insert into texnitesGuests
+    const { error: guestError } = await supabase
+      .from("texnitesGuests")
+      .insert([
+        { 
+          id: userId,  
+          username: username,
+          password: hashedPassword,
+          Onoma: Onoma,
+          Epitheto: Epitheto,
+          Phone: Phone,
+          Poli: Poli,
+        },
+      ])
+      .select();
+
+    // If the first insert fails, we stop and return false
+    if (guestError) {
+      console.error("Error inserting into texnitesGuests:", guestError.message);
+      return false;
+    }
+
+
+
+
+    // If we reached here, both inserts were successful
+    return true;
+
+  } catch (error) {
+    // This catches unexpected errors (network issues, syntax errors, etc.)
+    console.error("Unexpected error creating account:", error);
+    return false;
+  }
 };
 
 
@@ -656,7 +506,7 @@ export const getReviewsByTechnicianId  = async (technicianId) => {
     .from("reviews")
     .select("*")
     .eq("technician_id", technicianId);
-  //console.log(error);
+  console.log(error);
   if (error) {
     console.error("Error fetching reviews:", error);
     throw error;
@@ -684,7 +534,7 @@ export const getTechnicianById = async (technicianId) => {
 
 export const infotechnicianById = async (technicianId) => {
   const { data, error } = await supabase
-    .from(tablename)
+    .from("texnitestest1")
     .select("*")
     .eq("technician_id", technicianId)
     .single();

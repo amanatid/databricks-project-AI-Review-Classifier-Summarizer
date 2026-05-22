@@ -392,7 +392,16 @@ select, input[type="text"] {
   box-shadow: 0 3px 8px rgba(0,0,0,0.15);
 }
 
+.register-banner{
+  transition: all 0.25s ease;
+  cursor:pointer;
+}
 
+.register-banner:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+  background:#d1f5df;
+}
  @media (max-width: 576px) {
 .align-up {
   position: relative;
@@ -473,6 +482,7 @@ select, input[type="text"] {
   background-color: #258a40;
   border-color: #258a40;
 }
+
 
 
 

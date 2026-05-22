@@ -1,0 +1,129 @@
+<%- include("partials/header.ejs") %>
+
+<div class="container my-5">
+
+  <!-- ✅ SUCCESS MESSAGE (BONUS) -->
+  <% if (query.review === "success") { %>
+    <div class="alert alert-success text-center">
+      ✔ Η αξιολόγηση καταχωρήθηκε επιτυχώς!
+    </div>
+  <% } %>
+
+  <!-- 🔹 TECHNICIAN CARD -->
+ <div class="card shadow-lg rounded-4 p-4 mb-4 border-0">
+
+  <div class="text-center">
+
+    <!-- 👨‍🔧 SPECIALITY -->
+    <div class="mb-3">
+      <span class="badge rounded-pill px-4 py-2 fs-6"
+            style="background:#e8f7ef; color:#009150;">
+        <i class="bi bi-award-fill me-2"></i>
+        <%= infotechnician.Eidikotita %>
+      </span>
+    </div>
+
+    <!-- 👤 NAME -->
+    <h2 class="fw-bold mb-2">
+      <i class="bi bi-person-badge-fill text-success"></i>
+      <%= infotechnician.Onoma %>
+      <%= infotechnician.Epitheto %>
+    </h2>
+
+    <!-- ⭐ SCORE -->
+  <!-- ⭐ SCORE -->
+<div class="mt-4 d-flex flex-column align-items-center">
+
+  <!-- Score Circle -->
+  <div
+    class="rounded-circle shadow d-flex flex-column justify-content-center align-items-center"
+    style="
+      width:120px;
+      height:120px;
+      background:linear-gradient(135deg,#00b894,#00cec9);
+      color:white;
+    "
+  >
+
+    <div style="font-size:34px; font-weight:700; line-height:1;">
+      <%= technician.score
+          ? Number(technician.score).toFixed(1)
+          : "--" %>
+    </div>
+
+    <small style="font-size:13px;">
+      / 100
+    </small>
+
+  </div>
+
+  <!-- Reviews Count -->
+  <div class="mt-3">
+
+    <span class="fw-bold text-dark">
+      <i class="bi bi-star-fill text-warning"></i>
+
+      <%= reviews.length %>
+      αξιολογήσεις
+    </span>
+
+  </div>
+
+  <!-- Explanation -->
+  <p class="text-muted small mt-2 mb-0" style="max-width:320px;">
+    Το score βασίζεται σε αξιοπιστία, συνέπεια,
+    ποιότητα εργασίας, απόκριση και προηγούμενες αξιολογήσεις.
+  </p>
+
+</div>    
+</div>
+
+  
+  </div>
+
+  <!-- 💬 REVIEWS SECTION -->
+  <div class="card shadow-sm rounded-4 p-4">
+
+    <h5 class="fw-bold mb-3">
+      <i class="bi bi-chat-left-text"></i>
+      Σχόλια:
+    </h5>
+
+    <% if (reviews.length === 0) { %>
+      <p class="text-muted">Δεν υπάρχουν ακόμα αξιολογήσεις</p>
+    <% } %>
+
+    <% reviews.forEach(r => { %>
+      <div class="card mb-3 p-3 shadow-sm border-0">
+
+        <!-- ⭐ REVIEW SCORE -->
+        <p class="mb-1">
+          ⭐ 
+          <strong>
+            <%= (
+              (r.reliability + r.consistency + r.quality + r.response + r.price) / 5
+            ).toFixed(1) %>
+          </strong>
+        </p>
+
+        <!-- 💬 COMMENT -->
+        <% if (r.comment) { %>
+          <p class="mb-2">
+            <%= r.comment %>
+          </p>
+        <% } %>
+
+        <!-- 📊 EXTRA INFO -->
+        <small class="text-muted">
+          Ολοκληρώθηκε: <%= r.completed ? "Ναι" : "Όχι" %> |
+          Ημέρες: <%= r.days ? r.days : "-" %>
+        </small>
+
+      </div>
+    <% }) %>
+
+  </div>
+
+</div>
+
+<%- include("partials/footer.ejs") %>

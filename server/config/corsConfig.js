@@ -1,12 +1,12 @@
 import  cors from "cors" ;
 
-const configureCors = () => {
+export const configureCors = () => {
   return cors({
     //origin -> this will tell that which origins you want user can access your api
     origin: (origin, callback) => {
       const allowedOrigins = [
-        "http://localhost:3000", //local dev
-        "https://yourcustomdomain.com", //production domain
+        "http://localhost:51134", //local dev
+        "https://houseconsulting.gr", //production domain
       ];
 
       if (!origin || allowedOrigins.indexOf(origin) !== -1) {
@@ -24,5 +24,3 @@ const configureCors = () => {
     optionsSuccessStatus: 204,
   });
 };
-
-module.exports = { configureCors };

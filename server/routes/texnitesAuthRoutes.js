@@ -7,7 +7,7 @@ import { createaccount,
          forgotpassword, 
          forgetpasswordtoken,
          resetpasswordtoken,
-         resetnewpassowrdnulltoken 
+         resetnewpassowrdnulltoken,
         } 
         from "../controllers/texnitesAuthController.js";
 
@@ -25,7 +25,8 @@ router.get("/forgot-password", forgotpassword);
 router.post("/forgotpassword", forgetpasswordtoken );
 router.get("/resetpassword/:token", resetpasswordtoken);
 router.post("/resetpassword/:token",  resetnewpassowrdnulltoken );
-//////////////////////////////////////////////////////////////
+
+
 
 
 

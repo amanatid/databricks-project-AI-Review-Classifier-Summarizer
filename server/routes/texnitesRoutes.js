@@ -18,15 +18,19 @@ import {
     profiledeleteaccount,
     submitTechnician1,
     copylink,
-    evaluation,
  } from "../controllers/texnitesController.js";
 import { authMiddleware } from "../middleware/texnitesAuthMiddleware.js";
 import { isAdminUser } from "../middleware/texnitesAdminMiddleware.js";
+import { isTexnitisUser } from  "../middleware/texnitesUserMiddleware.js";
+import {
+   optionalAuthMiddleware
+} from "../middleware/optionalAuthMiddleware.js";
 import { adminPage,
     admineditmycard,
     admindeletemycard,
  } from "../controllers/texnitesAdminController.js";
-
+import { asyncHandler } from "../middleware/errorMiddleware.js";
+import { authorizeRoles } from "../middleware/authorizeRolesMiddleware.js";
  
  ///////////////////////////////////
 //import  uploadMiddleware  from "../middleware/upload-middleware.js"
@@ -38,14 +42,14 @@ router.get("/", getHomePage);
 router.get("/become-technician", becometechnician);
 
 //--------------Technician UserAccount------------------//
-router.get("/technician",authMiddleware, collabpage );
-router.post("/technician",authMiddleware, submitTechnician);
-router.get("/mycards", authMiddleware, mycardsnew);
-router.post("/edit-card/:id", authMiddleware, editmycard);
-router.delete("/delete-card/:id", authMiddleware,  deletemycard);
-router.get("/profile",  authMiddleware,  profile);
-router.post("/change-password",authMiddleware, profilechangepassword );
-router.post("/delete-account", authMiddleware, profiledeleteaccount);
+router.get("/technician",authMiddleware, isTexnitisUser,collabpage );
+router.post("/technician",authMiddleware,isTexnitisUser, submitTechnician);
+router.get("/mycards", authMiddleware, isTexnitisUser,mycardsnew);
+router.post("/edit-card/:id", authMiddleware,isTexnitisUser, editmycard);
+router.delete("/delete-card/:id", authMiddleware,isTexnitisUser,  deletemycard);
+router.get("/profile",  authMiddleware, authorizeRoles("user", "guest"),  profile);
+router.post("/change-password",authMiddleware, authorizeRoles("user", "guest"), profilechangepassword );
+router.post("/delete-account", authMiddleware,  authorizeRoles("user", "guest"),profiledeleteaccount);
 
 //--------------Technician WithoutAccount------------------//
 router.get("/technicianwithoutaccount",collabpage1 );
@@ -61,15 +65,13 @@ router.delete("/admin/delete/:id", authMiddleware, isAdminUser, admindeletemycar
 
 /////////////////////////////////////////////////////////////////////
 
-router.post("/submit", submitSearch);
+router.post("/submit", optionalAuthMiddleware, submitSearch);
 router.post("/submitepikoinwnia", submitContact);
 router.get("/simvoules", advice);
 router.get("/terms",showterms);
 router.get("/epikoinwnia",contactpage);
 
 router.get('/search', copylink );
-
-router.get("/evaluation",evaluation);
 
 
 

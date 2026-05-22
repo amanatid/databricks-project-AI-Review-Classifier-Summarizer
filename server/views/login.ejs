@@ -12,12 +12,51 @@
     </div>
 
     <% if (locals.errorMessage) { %>
-      <div class="alert alert-danger text-center">
-          <%= errorMessage %>
-      </div>
-    <% } %>
+  <div class="alert alert-danger text-center">
+      <%= errorMessage %>
+  </div>
+<% } %>
 
+<!-- ⭐ ONLY SHOW WHEN USER COMES FROM EVALUATION -->
+<% if (redirect && redirect.includes('/evaluation')) { %>
+
+  <div class="alert alert-info rounded-4 border-0 shadow-sm text-center">
+
+    <h6 class="fw-bold mb-2">
+      ⭐ Θέλετε να αξιολογήσετε τεχνικό;
+    </h6>
+
+    <p class="mb-2 small">
+      Αν έχετε ήδη λογαριασμό,
+      συμπληρώστε το email ή το τηλέφωνο και τον κωδικό σας
+      για να προχωρήσετε στην αξιολόγηση.
+    </p>
+
+    <p class="mb-3 small">
+      Αν δεν έχετε λογαριασμό,
+      μπορείτε να δημιουργήσετε δωρεάν λογαριασμό χρήστη.
+    </p>
+
+    <div class="d-grid gap-2 mt-3">
+
+      <!-- 👤 NORMAL USER -->
+      <a href="/createguestaccount"
+         class="btn btn-primary rounded-pill">
+
+         👤 Δημιουργία Δωρεάν Λογαριασμού
+
+      </a>
+
+    </div>
+
+  </div>
+
+<% } %>
     <form action="/login" method="POST" class="row g-3">
+
+         <input type="hidden"
+         name="redirect"
+         value="<%= redirect || '/' %>"> 
 
       <!-- Email -->
       <div class="col-12">

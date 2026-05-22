@@ -1,0 +1,278 @@
+<%- include("partials/header.ejs") %>
+
+<div class="container my-5 d-flex justify-content-center">
+
+  <div class="card shadow-lg rounded-4 border-0 p-4 w-100"
+       style="max-width:500px; background:#fefdf9;">
+
+    <!-- TITLE -->
+    <div class="text-center mb-4">
+
+      <div class="mb-3">
+        <i class="bi bi-person-plus-fill"
+           style="font-size:55px; color:#00a86b;"></i>
+      </div>
+
+      <h2 class="fw-bold">
+        Δημιουργία Λογαριασμού
+      </h2>
+
+      <p class="text-muted">
+        Δημιούργηστε δωρεάν λογαριασμό
+        για αξιολογήσεις και σχόλια τεχνικών.
+      </p>
+
+    </div>
+
+    <!-- INFO BOX -->
+    <div class="alert alert-info rounded-4 border-0 small">
+
+      <strong>✔ Γιατί να κάνω εγγραφή;</strong>
+
+      <ul class="mb-0 mt-2">
+        <li>Αξιολόγηση τεχνικών</li>
+        <li>Αποφυγή ψεύτικων reviews</li>
+        <li>Ασφαλέστερη κοινότητα</li>
+      </ul>
+
+    </div>
+
+    <!-- ERROR -->
+    <% if (locals.errorMessage) { %>
+      <div class="alert alert-danger text-center">
+        <%= errorMessage %>
+      </div>
+    <% } %>
+
+    <!-- FORM -->
+    <form id="registerForm" action="/createguestaccount" method="POST" class="row g-3">
+      
+        <!-- EMAIL -->
+            <div class="col-12">
+                <label class="form-label">
+        
+               </label>
+
+        <small class="text-muted d-block mb-2">
+        Μπορείτε να χρησιμοποιήσετε είτε το email είτε το κινητό σας
+        για σύνδεση στον λογαριασμό σας.
+        </small>
+
+        <input type="text"
+                name="username"
+                class="form-control rounded-pill"
+                placeholder="Email ή 69XXXXXXXX"
+                required>
+      </div>
+
+      <!-- PASSWORD -->
+      <div class="col-12">
+        <label class="form-label">Κωδικός Πρόσβασης</label>
+        <input type="password"
+                id="password"
+                name="password"
+                class="form-control rounded-pill"
+                placeholder="Τουλάχιστον 7 χαρακτήρες"
+                minlength="7"
+                required>
+     </div>
+
+      <!-- CONFIRM PASSWORD -->
+           
+        <div class="col-12">
+        <label class="form-label">Επιβεβαίωση Κωδικού</label>
+
+        <input type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                class="form-control rounded-pill"
+                placeholder="Επιβεβαίωση κωδικού"
+                minlength="7"
+                required>
+
+        <!-- ERROR MESSAGE -->
+        <small id="passwordError"
+                class="text-danger d-none">
+            Οι κωδικοί δεν ταιριάζουν
+        </small>
+        </div>
+  
+      <!-- NAME -->
+      <div class="col-12">
+        <label class="form-label">Όνομα</label>
+
+        <input type="text"
+               name="name"
+               class="form-control rounded-pill"
+               placeholder="Όνομα"
+               required>
+      </div>
+
+      <!-- SURNAME -->
+      <div class="col-12">
+        <label class="form-label">Επώνυμο</label>
+
+        <input type="text"
+               name="surname"
+               class="form-control rounded-pill"
+               placeholder="Επώνυμο"
+               required>
+      </div>
+
+    
+
+      <!-- MOBILE -->
+      <div class="col-12">
+        <label class="form-label">Κινητό Τηλέφωνο</label>
+
+        <input type="tel"
+               name="phone"
+               class="form-control rounded-pill"
+               placeholder="69XXXXXXXX"
+               required>
+      </div>
+
+      <!-- CITY -->
+      <div class="col-12">
+     
+        <!-- CITY -->
+        <div class="col-12">
+          <label class="form-label">Πόλη</label>
+          <select id="city"
+                  name="city"
+                  class="form-select rounded-pill">
+              <option value="">Επιλέξτε Πόλη</option>
+          </select>
+        </div>
+
+      </div>
+
+     
+      <!-- TERMS -->
+      <div class="col-12">
+
+        <div class="form-check">
+
+          <input class="form-check-input"
+                 type="checkbox"
+                 required>
+
+          <label class="form-check-label small">
+            Συμφωνώ με τους όρους χρήσης
+          </label>
+
+        </div>
+
+      </div>
+
+      <!-- BUTTON -->
+      <div class="col-12 mt-3">
+
+        <button type="submit"
+                class="btn btn-success w-100 rounded-pill py-2">
+
+          <i class="bi bi-check-circle-fill me-2"></i>
+          Δημιουργία Λογαριασμού
+
+        </button>
+
+      </div>
+
+    </form>
+
+    <!-- LOGIN -->
+    <div class="text-center mt-4">
+
+      <small class="text-muted">
+        Έχετε ήδη λογαριασμό;
+      </small>
+
+      <br>
+
+      <a href="/login"
+         class="text-decoration-none fw-bold">
+
+         Σύνδεση
+
+      </a>
+
+    </div>
+
+  </div>
+
+</div>
+<script>
+  const municipalities = <%- JSON.stringify(greekMunicipalities) %>;
+</script>
+
+<script>
+
+  const citySelect = document.getElementById("city");
+
+  // unique cities only
+  const cities = [...new Set(
+      municipalities.map(m => m.city)
+  )].sort((a, b) => a.localeCompare(b, 'el'));
+
+  // populate select
+  cities.forEach(city => {
+
+      const option = document.createElement("option");
+
+      option.value = city;
+      option.textContent = city;
+
+      citySelect.appendChild(option);
+
+  });
+
+</script>
+<script>
+
+  const form = document.getElementById("registerForm");
+
+  const password =
+      document.getElementById("password");
+
+  const confirmPassword =
+      document.getElementById("confirmPassword");
+
+  const passwordError =
+      document.getElementById("passwordError");
+
+  form.addEventListener("submit", function(event){
+
+      // hide old error first
+      passwordError.classList.add("d-none");
+
+      confirmPassword.classList.remove("border-danger");
+
+      // check passwords
+      if(password.value !== confirmPassword.value){
+
+          event.preventDefault();
+
+          passwordError.classList.remove("d-none");
+
+          confirmPassword.classList.add("border-danger");
+
+      }
+
+  });
+
+  // LIVE CHECK
+  confirmPassword.addEventListener("input", function(){
+
+      if(password.value === confirmPassword.value){
+
+          passwordError.classList.add("d-none");
+
+          confirmPassword.classList.remove("border-danger");
+
+      }
+
+  });
+
+</script>
+<%- include("partials/footer.ejs") %>
+

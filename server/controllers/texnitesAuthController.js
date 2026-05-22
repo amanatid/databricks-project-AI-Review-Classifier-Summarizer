@@ -6,7 +6,8 @@ import { createAccountTechnician,
 import { tokenfinduserbyusername,
          resettokenexpires, 
          tokenfinduserbytoken,
-         tokenpasswordtokenupdate 
+         tokenpasswordtokenupdate,
+//         gettechnicianidwithaccount
       } from "../models/texnitesModel.js";
 import { sendEmailResetPassword } from "../services/emailService.js";
 import bcrypt from "bcryptjs";   
@@ -25,17 +26,57 @@ export const createaccount = async  (req, res) => {
 export const registerUser = async (req, res) => {
   try {
     //extract user information from our request body
-    const { username, password } = req.body;
+    const { username, password, phone } = req.body;
     
+    //console.log(req.body);
 
-    const checkExistingUser = await checkExistingTechnician(username);
+    const normalizedUsername = username.trim();
+
+    // check if email
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedUsername);
+
+    // normalize phone
+    const normalizedPhoneUsername = normalizedUsername
+      .replace(/\D/g, "")
+      .replace(/^30/, "");
+
+    // check if greek mobile
+    const isGreekMobile = /^69\d{8}$/.test(normalizedPhoneUsername);
+
+    // ❌ if neither email nor phone → reject
+    if (!isEmail && !isGreekMobile) {
+      return res.render("register", {
+        message: "Το username πρέπει να είναι έγκυρο email ή κινητό (69XXXXXXXX)",
+        submitbutton: false
+      });
+    }
+
+    // ✅ if it's phone → store normalized version
+    const finalUsername = isGreekMobile
+      ? normalizedPhoneUsername
+      : normalizedUsername;
+
+  
+
+    const editedphone=phone.trim()                  // remove leading/trailing spaces
+             .replace(/\D/g, "")                   // remove all non-digits (spaces, dashes, etc.)
+             .replace(/^30/, "")
+
+    // ❌ validate phone field (REQUIRED)
+    if (!/^69\d{8}$/.test(editedphone)) {
+      return res.render("register", {
+        message: "Το κινητό πρέπει να ξεκινά από 69 και να έχει 10 ψηφία",
+        submitbutton: false
+      });
+    }         
+
+    const checkExistingUser = await checkExistingTechnician(finalUsername);
    
 
     if (checkExistingUser) {
-        return res.status(400).json({
-        success: false,
-        message:
-          "User is already exists either with same username(email). Please try with a different email",
+        return res.render("register", {
+        message: "Ο χρήστης υπάρχει ήδη. Δοκιμάστε άλλο email ή κινητό",
+        submitbutton: false
       });
     }
 
@@ -43,8 +84,11 @@ export const registerUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+   
+
     //create a new user and save in your database
-    const newlyCreatedUser = await createAccountTechnician(username, hashedPassword) ; 
+    const newlyCreatedUser = await createAccountTechnician(finalUsername, hashedPassword , editedphone) ; 
+    
    
     if (newlyCreatedUser) {
       res.render("createaccount.ejs", {
@@ -87,13 +131,17 @@ export const submitaccount = async  (req, res) => {
 
 
 export const loginaccount = async  (req, res) => {
- res.render("login.ejs");
+ res.render("login", {
+    redirect: req.query.redirect
+  });
+
 };
 
 
 export const loginUser = async (req, res) => {
+  console.log('Hit Login  endpoint...')
   try {
-     let { username, password } = req.body;
+     let { username, password,redirect } = req.body;
    
     username = username.trim();
     username = username.replace(/\s+/g, "");
@@ -139,13 +187,17 @@ export const loginUser = async (req, res) => {
       errorMessage: "Λανθασμένα στοιχεία σύνδεσης"
     });
     }
+    
+    
+    //const  technicianid  =  await gettechnicianidwithaccount(user.id);
 
-    //create user token
+  
     const accessToken = jwt.sign(
       {
         userId: user.id,
         username: user.username,
         role:user.role,
+      //  technicianid:technicianid
       },
       process.env.JWT_SECRET_KEY,
       {
@@ -166,16 +218,24 @@ export const loginUser = async (req, res) => {
     // return res.redirect("/technician");
     if (user.role === "admin") {
          return res.redirect("/admin");
-    } else {
+    }     
+    if (user.role ===  "user"){
         return res.redirect("/technician");
     }
-
+   
+    if (user.role ===  "guest"){
+       console.log('Guest  to be  redirected...')
+    
+       console.log(redirect);
+        return res.redirect(redirect || "/");
+    }
+ 
      
   } catch (error) {
     //console.log(e);
     res.status(500).json({
       success: false,
-      message: "Some error occured! Please try again",
+      message: "Σφάλμα server",
     });
   }
 };
@@ -312,4 +372,50 @@ export const resetnewpassowrdnulltoken = async (req, res) => {
 };
 
 
+////////////////////////////////////////////////////////
+export const registerguest= async (req, res) => {
+  try {
+    const { email, phone, password } = req.body;
 
+    // 🔍 Validate phone
+    if (!/^69\d{8}$/.test(phone)) {
+      return res.render("register", {
+        message: "Το κινητό πρέπει να ξεκινά από 69"
+      });
+    }
+
+    const checkExistingUser = await checkExistingTechnician(username);
+   
+
+    if (checkExistingUser) {
+        return res.status(400).json({
+        success: false,
+        message:
+          "User is already exists either with same username(email). Please try with a different email",
+      });
+    }
+
+    //hash user password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    //create a new user and save in your database
+    const newlyCreatedUser = await createAccountTechnician(username, hashedPassword) ; 
+    
+   
+
+    
+
+    res.redirect("/login");
+
+  } catch (err) {
+    res.render("register", {
+      message: "Σφάλμα εγγραφής"
+    });
+  }
+};
+
+
+/*export const createguestaccount = async(req, res)=>{
+  res.render("createguestaccount.ejs");
+}*/

@@ -8,8 +8,25 @@
       Αξιολόγηση Τεχνίτη
     </h4>
 
-    <!-- <form action="/submit-review/< %=technician.id %>" method="POST" class="row g-3"> -->
-        <form action="/evaluation/" method="POST" class="row g-3"></form>
+    <% if (query.success) { %>
+        <div class="alert alert-success text-center">
+          ✔ Η αξιολόγηση υποβλήθηκε επιτυχώς!
+        </div>
+      <% } %>
+
+      <% if (query.error === "already-reviewed") { %>
+        <div class="alert alert-danger text-center">
+          ⚠ Έχετε ήδη αξιολογήσει αυτόν τον τεχνίτη
+        </div>
+      <% } %>
+
+      <% if (query.error === "server") { %>
+        <div class="alert alert-danger text-center">
+          ❌ Σφάλμα διακομιστή. Δοκιμάστε ξανά.
+        </div>
+      <% } %>
+     <form action="/evaluation/<%= technicianId  %>" method="POST" class="row g-3"> 
+    <!-- <form action="/evaluation/" method="POST" class="row g-3"> -->
 
       <!-- Reliability -->
       <div class="col-12">

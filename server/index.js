@@ -3,9 +3,17 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import texnitesRoutes from "./routes/texnitesRoutes.js";
 import { errorHandler } from "./middleware/errorMiddleware.js";
+import { globalErrorhandler } from "./middleware/errorMiddleware.js";
 import texnitesAuthRoutes  from "./routes/texnitesAuthRoutes.js";
+import texnitesGuestRoutes from "./routes/texnitesGuestRoutes.js"; 
+import texnitesEvaluationRoutes from "./routes/texnitesEvaluationRoutes.js";
+
 ///////////////////////////////////////////////////////////////////
 import texnitesImageRoutes from "./routes/texnitesImageRoutes.js";
+import { urlVersioning } from "./middleware/apiVersioning.js";
+import  itemRoutes  from "./routes/item-routes.js";
+import { createBasicRateLimiter }  from "./middleware/rateLimitng.js"
+
 ///////////////////////////////////////////////////////////////////
 //import texnitesAdminRoute from "./routes/texnitesAdminRoute.js"
 import cookieParser from "cookie-parser";
@@ -13,6 +21,7 @@ import { storetoken } from "./middleware/cookietoken.js";
 import methodOverride from "method-override";
 import  cors from "cors" ;
 import promClient from "prom-client";
+import { configureCors } from "./config/corsConfig.js";
 
 
 
@@ -21,6 +30,7 @@ dotenv.config();
 
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { addTimeStamp, requestLogger } from "./middleware/customMiddleware.js";
 
 // Fixes the __dirname issue in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -69,7 +79,15 @@ app.get("/metrics", async(req,res)=>{
 // Ensure Express uses EJS for rendering views
 app.set("view engine", "ejs");
 
-app.use(cors());
+app.use(configureCors());
+/////////////////////
+//app.use(createBasicRateLimiter(2, 15 * 60 * 1000)); // 100 request per 15 minutes
+//app.use(requestLogger);
+//app.use(addTimeStamp);
+
+////////////////////////
+
+
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
@@ -83,8 +101,13 @@ app.use(methodOverride("_method"));
 // Routes
 app.use("/", texnitesRoutes);
 app.use("/", texnitesAuthRoutes);
+app.use("/", texnitesGuestRoutes);
+app.use("/", texnitesEvaluationRoutes);
 /////////////////////////////////////
 app.use("/", texnitesImageRoutes);
+//app.use( urlVersioning("v1"));
+//app.use("/api/v1",itemRoutes);
+//app.use(globalErrorhandler);
 /////////////////////////////////////
 
 

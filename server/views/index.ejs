@@ -1,5 +1,6 @@
 <%- include("partials/header.ejs") %>
 
+
 <section class="hero position-relative mb-5">
 
   <img src="/images/hero-workers.png" class="hero-img" alt="Hero">
@@ -14,16 +15,31 @@
 </section>
 
 
- <div class="container my-4">
-  <div class="alert alert-success text-center shadow-sm rounded-4">
-    <h5 class="fw-bold mb-2">🎉 Δωρεάν Εγγραφή για Τεχνικούς!</h5>
-    <p class="mb-0">
-      ✔️ Δημιούργησε Δωρεάν  προφίλ <br>
-     
-    </p>
-  </div>
-</div>
+    <div class="container my-4">
 
+      <a href="/become-technician"
+        class="text-decoration-none">
+
+        <div class="alert alert-success text-center shadow-sm rounded-4 p-4 
+                    border-0 register-banner">
+
+          <h4 class="fw-bold mb-2">
+            🎉 Δωρεάν Εγγραφή για Τεχνικούς!
+          </h4>
+
+          <p class="mb-0 fs-5">
+            ✔️ Δημιούργησε Δωρεάν προφίλ
+          </p>
+
+          <small class="d-block mt-2 text-dark">
+            Πάτησε εδώ για να ξεκινήσεις →
+          </small>
+
+        </div>
+
+      </a>
+
+    </div>
 
   <!-- Search Section -->
   <div class="container my-6 search-section">
@@ -176,99 +192,14 @@
 
   
   
-  
 <script>
   const municipalities = <%- JSON.stringify(greekMunicipalities) %>;
+  
+</script>
 </script>
   
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
  
-
-<script>
-  const regionSelect = document.getElementById("region");
-  const prefectureSelect = document.getElementById("prefecture");
-  const citySelect = document.getElementById("city");
-
-  // Unique Regions
-  const regions = [...new Set(municipalities.map(m => m.region))]
-  .sort((a, b) => a.localeCompare(b, 'el'));
-
-    // Populate ALL cities initially
- const allCities = [...new Set(municipalities.map(m => m.city))]
-  .sort((a, b) => a.localeCompare(b, 'el'));
-
-allCities.forEach(c => {
-  const option = document.createElement("option");
-  option.value = c;
-  option.textContent = c;
-  citySelect.appendChild(option);
-});
-
-  regions.forEach(r => {
-    const option = document.createElement("option");
-    option.value = r;
-    option.textContent = r;
-    regionSelect.appendChild(option);
-  });
-
-  // When Region changes → filter Prefectures
- regionSelect.addEventListener("change", () => {
-  const selectedRegion = regionSelect.value;
-
-  prefectureSelect.innerHTML = '<option value="">Όλοι οι Νομοί</option>';
-  citySelect.innerHTML = '<option value="">🔄 Όλες οι Πόλεις</option>';
-
-  let filtered = municipalities;
-
-  if (selectedRegion) {
-    filtered = municipalities.filter(m => m.region === selectedRegion);
-  }
-
-  const prefectures = [...new Set(filtered.map(m => m.prefecture))]
-  .sort((a, b) => a.localeCompare(b, 'el'));
-
-  const cities = [...new Set(filtered.map(m => m.city))]
-  .sort((a, b) => a.localeCompare(b, 'el'));
-
-  prefectures.forEach(p => {
-    const option = document.createElement("option");
-    option.value = p;
-    option.textContent = p;
-    prefectureSelect.appendChild(option);
-  });
-
-  cities.forEach(c => {
-    const option = document.createElement("option");
-    option.value = c;
-    option.textContent = c;
-    citySelect.appendChild(option);
-  });
-});
-
-
-prefectureSelect.addEventListener("change", () => {
-  const selectedPrefecture = prefectureSelect.value;
-
-  citySelect.innerHTML = '<option value="">🔄  Όλες οι Πόλεις</option>';
-
-  let filtered = municipalities;
-
-  if (selectedPrefecture) {
-    filtered = municipalities.filter(m => m.prefecture === selectedPrefecture);
-  }
-
- const cities = [...new Set(filtered.map(m => m.city))]
-  .sort((a, b) => a.localeCompare(b, 'el'));
-
-  cities.forEach(c => {
-    const option = document.createElement("option");
-    option.value = c;
-    option.textContent = c;
-    citySelect.appendChild(option);
-  });
-}); 
-
-</script>
 
 <script>
   ///////////////////
@@ -328,7 +259,10 @@ prefectureSelect.addEventListener("change", () => {
 
     const result = await response.json();
 
-    console.log("Response from server:", result);
+    //const isLoggedIn = result.isLoggedIn;
+
+   // console.log("Response from server:", result);
+   // console.log("from  index.ejs file",result.data)
 
     const container = document.getElementById('results');
    
@@ -348,7 +282,7 @@ prefectureSelect.addEventListener("change", () => {
         if (city) params.append('city', city);
 
         const shareURL = `${window.location.origin}/search?${params.toString()}`;
-      console.log(shareURL)
+      //console.log(shareURL)
 
       generatedShareURL = shareURL;
       document.getElementById('shareLinkContainer').classList.remove('d-none');
@@ -369,9 +303,51 @@ prefectureSelect.addEventListener("change", () => {
         <div class="card shadow rounded-4 border-0 overflow-hidden w-100 h-100 d-flex flex-column" style="background-color: #fefdf9;">
            <div class="card-body p-4 ">
       
-            <div class="text-center mb-3">
-                <h4 class="fw-bold">${item.Onoma} ${item.Epitheto}</h4>
-            </div>  
+           <div class="text-center mb-3">
+
+                <!-- 👤 NAME -->
+                <h4 class="fw-bold mb-2">
+                  ${item.Onoma} ${item.Epitheto}
+                </h4>
+
+                <!-- ⭐ SCORE -->
+                <div class="d-flex justify-content-center align-items-center mb-2">
+
+                  <div class="rounded-circle shadow-sm d-flex flex-column 
+                              justify-content-center align-items-center"
+                      style="
+                        width:75px;
+                        height:75px;
+                        background:linear-gradient(135deg,#00b894,#00cec9);
+                        color:white;
+                      ">
+
+                      <div style="font-size:22px;font-weight:bold;line-height:1;">
+                        ${item.score ? Number(item.score).toFixed(1) : "-"}
+                      </div>
+
+                      <small style="font-size:11px;">
+                        Score
+                      </small>
+
+                  </div>
+
+                </div>
+
+                <!-- 💬 COMMENTS BUTTON -->
+                <div class="mb-2">
+
+                  <a href="/evaluatedtechnician/${item.technician_id}"
+                    class="btn btn-sm btn-outline-success rounded-pill px-3">
+
+                      <i class="bi bi-chat-left-text"></i>
+                      Σχόλια & Αξιολογήσεις
+
+                  </a>
+
+                </div>
+
+            </div> 
 
             <p class="mb-1">
                <i class="bi bi-award-fill  me-2"  style="color: #009150;" ></i><strong>Ειδικότητα:</strong>
@@ -408,9 +384,16 @@ prefectureSelect.addEventListener("change", () => {
     
  
            <a href="tel:${item.Phone}"
-             class="btn phone-button w-100 mb-2 rounded-pill">
-            <i class="bi bi-telephone-fill me-2"></i>${item.Phone}
+              class="btn phone-button w-100 mb-2 rounded-pill">
+              <i class="bi bi-telephone-fill me-2"></i>${item.Phone}
            </a>
+ 
+           <!-- ✅ NEW BUTTON -->
+            <button class="btn btn-outline-primary w-100 rounded-pill"
+                onclick="handleEvaluate('${item.technician_id}','${item.isLoggedIn}')">
+               ⭐ Αξιολόγηση
+            </button> 
+
          </div>
        </div>
      
@@ -460,9 +443,185 @@ citySelect.addEventListener("change", () => {
 });
 
  /////////////////////////////////////////////////////////////////////////////////
+ function handleEvaluate(technicianId, isLoggedIn) {
+ 
+  
+  if (isLoggedIn !== "true") {
+    // 🚨 Not logged in → redirect
+    window.location.href = `/login?redirect=/evaluation/${technicianId}`;
+    return;
+  }
+
+  // ✅ Logged in → go to evaluation page
+  window.location.href = `/evaluation/${technicianId}`;
+}
 
 </script>
 
+
+<script>
+  const regionSelect = document.getElementById("region");
+  const prefectureSelect = document.getElementById("prefecture");
+  const citySelect = document.getElementById("city");
+
+  // Parent wrapper of prefecture select
+  const prefectureWrapper = prefectureSelect.closest(".col-12");
+
+  // =========================
+  // LOAD REGIONS
+  // =========================
+
+  const regions = [...new Set(municipalities.map(m => m.region))]
+    .sort((a, b) => a.localeCompare(b, 'el'));
+
+  regions.forEach(region => {
+
+    const option = document.createElement("option");
+
+    option.value = region;
+
+    option.textContent = region;
+
+    regionSelect.appendChild(option);
+
+  });
+
+  // =========================
+  // LOAD ALL CITIES INITIALLY
+  // =========================
+
+  loadCities(municipalities);
+
+  // Hide prefecture initially
+  prefectureWrapper.style.display = "none";
+
+  // =========================
+  // REGION CHANGE
+  // =========================
+
+  regionSelect.addEventListener("change", () => {
+
+    const selectedRegion = regionSelect.value;
+
+    // Reset
+    prefectureSelect.innerHTML =
+      '<option value="">Όλοι οι Νομοί</option>';
+
+    citySelect.innerHTML =
+      '<option value="">🔄 Όλες οι Πόλεις</option>';
+
+    // FILTER REGION
+    let filtered = municipalities;
+
+    if (selectedRegion) {
+
+      filtered = municipalities.filter(
+        m => m.region === selectedRegion
+      );
+
+    }
+
+    // =========================
+    // ONLY ATTIKI SHOWS NOMOS
+    // =========================
+
+    if (selectedRegion === "Αττικής") {
+
+      prefectureWrapper.style.display = "block";
+
+      const prefectures =
+        [...new Set(filtered.map(m => m.prefecture))]
+        .sort((a, b) => a.localeCompare(b, 'el'));
+
+      prefectures.forEach(pref => {
+
+        const option = document.createElement("option");
+
+        option.value = pref;
+
+        option.textContent = pref;
+
+        prefectureSelect.appendChild(option);
+
+      });
+
+    } else {
+
+      // Hide prefecture for all other regions
+      prefectureWrapper.style.display = "none";
+
+      prefectureSelect.value = "";
+
+    }
+
+    // Load cities
+    loadCities(filtered);
+
+  });
+
+  // =========================
+  // PREFECTURE CHANGE
+  // =========================
+
+  prefectureSelect.addEventListener("change", () => {
+
+    const selectedPrefecture = prefectureSelect.value;
+
+    citySelect.innerHTML =
+      '<option value="">🔄 Όλες οι Πόλεις</option>';
+
+    let filtered = municipalities;
+
+    // Keep region filter
+    if (regionSelect.value) {
+
+      filtered = filtered.filter(
+        m => m.region === regionSelect.value
+      );
+
+    }
+
+    // Apply prefecture only in Attiki
+    if (selectedPrefecture) {
+
+      filtered = filtered.filter(
+        m => m.prefecture === selectedPrefecture
+      );
+
+    }
+
+    loadCities(filtered);
+
+  });
+
+  // =========================
+  // LOAD CITIES FUNCTION
+  // =========================
+
+  function loadCities(data) {
+
+    citySelect.innerHTML =
+      '<option value="">🔄 Όλες οι Πόλεις</option>';
+
+    const cities =
+      [...new Set(data.map(m => m.city))]
+      .sort((a, b) => a.localeCompare(b, 'el'));
+
+    cities.forEach(city => {
+
+      const option = document.createElement("option");
+
+      option.value = city;
+
+      option.textContent = city;
+
+      citySelect.appendChild(option);
+
+    });
+
+  }
+
+</script>
 
 </body>
 </html>
